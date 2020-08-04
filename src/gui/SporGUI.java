@@ -6,11 +6,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.RandomAccessFile;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Random;
 
 import javax.swing.JComboBox;
 
@@ -22,19 +19,13 @@ import gui.guicommon.*;
 import gui.guidialog.common.ErrorDialog;
 import gui.guidialog.common.HelpDialog;
 import gui.others.*;
-import weka.core.Instance;
 import weka.core.Instances;
 
-public class Coreg implements ActionListener, ItemListener {
+public class SporGUI implements ActionListener, ItemListener {
 	/**
 	 * Select the arff file.
 	 */
 	private FilenameField arffFilenameField;
-
-	/**
-	 * Indicate number of queries?
-	 */
-	private Checkbox indicateQueriesCheckbox;
 
 	/**
 	 * The proportion of labels that can be queried.
@@ -45,68 +36,59 @@ public class Coreg implements ActionListener, ItemListener {
 	 * The proportion of representative labels queried in the first round.
 	 */
 	private DoubleField testFractionField;
+	
 	/**
 	 * The iterations of training process.
 	 */
 	private IntegerField trainingIterations;
 
 	/**
-	 * Checkboxes for algorithms.
-	 */
-	private Checkbox[] algorithmCheckboxes;
-
-	/**
 	 * Distance measures: Euclidean, Manhattan, Mahalanobis
 	 */
 	private JComboBox<String> distanceJComboBox1;
+
 	/**
 	 * Distance measures: Euclidean, Manhattan, Mahalanobis
 	 */
 	private JComboBox<String> distanceJComboBox2;
 
 	/**
-	 * Ensemble algorithm
+	 * Algorithm: SporGUI, Spor
 	 */
-	private JComboBox<String> ensembleAlgorithmJComboBox;
+	private JComboBox<String> algorithmJComboBox;
 
 	/**
-	 * Critical instance selection strategy
-	 */
-	private JComboBox<String> selectCriticalStrategyJComboBox;
-
-	/**
-	 * Query amount for critical instance selection
-	 */
-	private JComboBox<String> queryAmountStrategyJComboBox;
-
-	/**
-	 * Retrospect or not.
-	 */
-	private Checkbox retrospectCheckbox;
-	/**
-	 * running with ultimatetimes or not.
+	 * Running with ultimate times or not.
 	 */
 	private Checkbox ultimatCheckbox;
+
 	/**
 	 * Get best number of K or not.
 	 */
 	private Checkbox crossValidCheckbox;
+
 	private Checkbox stableTresholdCheckbox;
 
 	/**
 	 * Normalize or not.
 	 */
 	private Checkbox normalizeCheckbox;
-	/**
-	 * Selfpacelearning or not.
-	 */
 
+	/**
+	 * Self-pace learning or not.
+	 */
 	private Checkbox splCheckbox;
+
 	/**
 	 * AddTherehold in add instances or not.
 	 */
 	private Checkbox ThresholdCheckbox;
 
+	/**
+	 * AddTherehold in add instances or not.
+	 */
+	private DoubleField stableThresholdField;
+	
 	/**
 	 * Disorder or not.
 	 */
@@ -118,7 +100,8 @@ public class Coreg implements ActionListener, ItemListener {
 	private DoubleField adaptiveRatioDoubleField;
 
 	/**
-	 * Small block threshold. Small blocks will not be classified using the pure criteria.
+	 * Small block threshold. Small blocks will not be classified using the pure
+	 * criteria.
 	 */
 	private IntegerField smallBlockThresholdIntegerField;
 
@@ -134,9 +117,12 @@ public class Coreg implements ActionListener, ItemListener {
 	/**
 	 * For neighbor based weight as well as entropy computation.
 	 */
-	private DoubleField neighborBasedWeightDoubleField;
 	private DoubleField ThresholdField;
-	private DoubleField stableThresholdField;
+	
+	/**
+	 * For neighbor based weight as well as entropy computation.
+	 */
+	//private DoubleField stableThresholdField;
 
 	/**
 	 * Checkbox for variable tracking.
@@ -167,7 +153,7 @@ public class Coreg implements ActionListener, ItemListener {
 	 * The only constructor
 	 */
 
-	public Coreg() {
+	public SporGUI() {
 		// A simple frame to contain the dialog
 		Frame mainFrame = new Frame();
 		mainFrame.setTitle("Semi-Supervised Regression with Co-Training Style Algorithm ");
@@ -242,6 +228,14 @@ public class Coreg implements ActionListener, ItemListener {
 		knnNumberPanel.add(knnNumberLabel2);
 		knnNumberPanel.add(kValueIntegerField2);
 
+		processTrackingCheckbox = new Checkbox(" Process tracking ", false);
+		variableTrackingCheckbox = new Checkbox(" Variable tracking ", false);
+		fileOutputCheckbox = new Checkbox(" Output to file ", false);
+		Panel trackingPanel = new Panel();
+		trackingPanel.add(processTrackingCheckbox);
+		trackingPanel.add(variableTrackingCheckbox);
+		trackingPanel.add(fileOutputCheckbox);
+
 		Panel topPanel = new Panel();
 		topPanel.setLayout(new GridLayout(7, 1));
 		topPanel.add(sourceFilePanel);
@@ -250,6 +244,7 @@ public class Coreg implements ActionListener, ItemListener {
 		topPanel.add(tempCotrianerLabel);
 		topPanel.add(distancePanel);
 		topPanel.add(knnNumberPanel);
+		topPanel.add(trackingPanel);
 
 		Panel centralPanel = new Panel();
 		centralPanel.setLayout(new GridLayout(1, 1));
@@ -271,11 +266,11 @@ public class Coreg implements ActionListener, ItemListener {
 		helpButton.setSize(20, 10);
 		HelpDialog helpDialog = null;
 		try {
-			helpDialog = new HelpDialog("Coreg algorithm", "src/gui/coregHelp.txt");
+			helpDialog = new HelpDialog("SporGUI algorithm", "src/gui/SporHelp.txt");
 			helpButton.addActionListener(helpDialog);
 		} catch (Exception ee) {
 			try {
-				helpDialog = new HelpDialog("Coreg algorithm", "src/gui/coregHelp.txt");
+				helpDialog = new HelpDialog("SporGUI algorithm", "gui/SporHelp.txt");
 				helpButton.addActionListener(helpDialog);
 			} catch (Exception ee2) {
 				ErrorDialog.errorDialog.setMessageAndShow(ee.toString());
@@ -305,7 +300,7 @@ public class Coreg implements ActionListener, ItemListener {
 	}
 
 	public static void main(String args[]) {
-		new Coreg();
+		new SporGUI();
 	}// Of main
 
 	/**
@@ -357,78 +352,81 @@ public class Coreg implements ActionListener, ItemListener {
 			r.close();
 			tempdata.setClassIndex(tempdata.numAttributes() - 1);
 			if (tempNormalize == true) {
-				//SimpleTools.normalizeDecisionSystem(tempdata);
+				// SimpleTools.normalizeDecisionSystem(tempdata);
 				SimpleTool.normalize(tempdata);
 			}
-			
+
 			double Threshold = ThresholdField.getValue();
 			File file = new File("result.txt");
 			FileWriter out = new FileWriter(file);
-			
-            
-			//for (double i = 1; i > ThresholdField.getValue(); i -= 0.01) {
-		    //Threshold = i;	
-			
-				for (int k = 0; k < tempRepeatTimes; k++) {
-					SimpleTools.errorDrop = 0;
-					SimpleTools.lastDrop = 0;
-					SimpleTools.preDrop = 0;
-					SimpleTools.NumInstances1added = 0;
-					SimpleTools.NumInstances2added = 0;
-					if (tempDisorder == true) {
-						SimpleTools.disorderData(tempdata);
-					}
-					Learner tempLearner = new Learner(tempdata, tempCotrainer1DistanceMeasure,
-							tempCotrainer2DistanceMeasure, tempCotrainerKValue1, 100, tempCotrainerKValue2, labelrate,
-							testFractionField.getValue(), tempIterations, Threshold);
-					if (crossValidCheckbox.getState() == true) {
-						tempLearner.firstCotrainer.crossValid();
-						tempLearner.secondCotrainer.crossValid();
-					}
-					if (ThresholdCheckbox.getState() == true && stableTresholdCheckbox.getState() == false) {
-						tempLearner.Cotraininges();
-					}
-					if (splCheckbox.getState() == false && ThresholdCheckbox.getState() == false
-							&& stableTresholdCheckbox.getState() == false && ultimatCheckbox.getState() == false) {
-						tempLearner.cotraining();
-					}
-					tempLearner.firstCotrainer.denoise();
-					// tempLearner.firstCotrainer.preDenoise();
-					tempLearner.secondCotrainer.denoise();
-					// tempLearner.secondCotrainer.preDenoise();
-					tempString = tempLearner.Learn(tempLearner.firstCotrainer, tempLearner.secondCotrainer);
-					resultMessage += tempString + "\r\n";
-					wr1 = SimpleTools.errorDrop*100 ;
-					wr2 = SimpleTools.lastDrop *100;
-					wr3 = SimpleTools.preDrop ;
-					wr4 = (int) (SimpleTools.NumInstances1added);
-					wr5 = (int) (SimpleTools.NumInstances2added );
-					out.write(wr1 + "\t");
-					out.write(wr2 + "\t");
-					out.write(wr3 + "\t");
-					out.write(wr4 + "\t");
-					out.write(wr5 + "\r\n"); 
+
+			for (int k = 0; k < tempRepeatTimes; k++) {
+				SimpleTools.errorDrop = 0;
+				SimpleTools.lastDrop = 0;
+				SimpleTools.preDrop = 0;
+				SimpleTools.NumInstances1added = 0;
+				SimpleTools.NumInstances2added = 0;
+				if (tempDisorder == true) {
+					SimpleTools.disorderData(tempdata);
 				}
-			
-						
-			//}		
-			
-			out.close();			
+				Learner tempLearner = new Learner(tempdata, tempCotrainer1DistanceMeasure,
+						tempCotrainer2DistanceMeasure, tempCotrainerKValue1, 100,
+						tempCotrainerKValue2, labelrate, testFractionField.getValue(),
+						tempIterations, Threshold);
+				if (crossValidCheckbox.getState() == true) {
+					tempLearner.firstCotrainer.crossValid();
+					tempLearner.secondCotrainer.crossValid();
+				}
+				
+				if (ThresholdCheckbox.getState() == true
+						&& stableTresholdCheckbox.getState() == false) {
+					tempLearner.Cotraininges();
+				}
+				
+				if (splCheckbox.getState() == false && ThresholdCheckbox.getState() == false
+						&& stableTresholdCheckbox.getState() == false
+						&& ultimatCheckbox.getState() == false) {
+					tempLearner.cotraining();
+				}
+				tempLearner.firstCotrainer.denoise();
+				// tempLearner.firstCotrainer.preDenoise();
+				tempLearner.secondCotrainer.denoise();
+				// tempLearner.secondCotrainer.preDenoise();
+				tempString = tempLearner.Learn(tempLearner.firstCotrainer,
+						tempLearner.secondCotrainer);
+				resultMessage += tempString + "\r\n";
+				wr1 = SimpleTools.errorDrop * 100;
+				wr2 = SimpleTools.lastDrop * 100;
+				wr3 = SimpleTools.preDrop;
+				wr4 = (int) (SimpleTools.NumInstances1added);
+				wr5 = (int) (SimpleTools.NumInstances2added);
+				out.write(wr1 + "\t");
+				out.write(wr2 + "\t");
+				out.write(wr3 + "\t");
+				out.write(wr4 + "\t");
+				out.write(wr5 + "\r\n");
+			}
+
+			// }
+
+			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 
 		}
 		messageTextArea.append(resultMessage);
-		messageTextArea.append("The denoising wins times:" + SimpleTools.win + "      " + "The denoising loses times:"
-				+ SimpleTools.lose + "\r\n");
-		messageTextArea.append("The max error dorp:" + df.format(SimpleTools.maxErrorDrop) + "\r\n");
-		messageTextArea.append("The min error dorp:" + df.format(SimpleTools.minErrorDrop) + "\r\n");
-		messageTextArea.append(
-				"The ave error dorp rate:" + df.format((SimpleTools.errorDrop / tempRepeatTimes) * 100) + "%" + "\r\n");
-		messageTextArea.append(
-				"The average label1 added instance:" + SimpleTools.NumInstances1added / tempRepeatTimes + "\r\n");
-		messageTextArea.append(
-				"The average label2 added instance:" + SimpleTools.NumInstances2added / tempRepeatTimes + "\r\n");
+		messageTextArea.append("The denoising wins times:" + SimpleTools.win + "      "
+				+ "The denoising loses times:" + SimpleTools.lose + "\r\n");
+		messageTextArea
+				.append("The max error dorp:" + df.format(SimpleTools.maxErrorDrop) + "\r\n");
+		messageTextArea
+				.append("The min error dorp:" + df.format(SimpleTools.minErrorDrop) + "\r\n");
+		messageTextArea.append("The ave error dorp rate:"
+				+ df.format((SimpleTools.errorDrop / tempRepeatTimes) * 100) + "%" + "\r\n");
+		messageTextArea.append("The average label1 added instance:"
+				+ SimpleTools.NumInstances1added / tempRepeatTimes + "\r\n");
+		messageTextArea.append("The average label2 added instance:"
+				+ SimpleTools.NumInstances2added / tempRepeatTimes + "\r\n");
 	}
 
 	@Override
