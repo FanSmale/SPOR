@@ -1,0 +1,45 @@
+ Project:          The cost-sensitive active learning project.
+ Author:           Fan Min, minfanphd@163.com
+ Copyright:        The source code and all documents are open and free.
+ Organization:     Lab of machine learning, Southwest Petroleum University, Chengdu 610500, China. www.fansmale.com.
+ Progress:         Over 75%.
+ Written time:     December 09, 2018.
+ Last modify time: August 29, 2019.
+
+This is the help document of our paper "Active learning through clustering algorithm selection," which will be submitted to "International Journal of Machine Learning and Cybernetics."
+
+Here are the explanation of settings. We will use the iris dataset with 150 instances for illustration.
+
+The .arff file: The data filename. Please use Browse to select.
+Indicate queries: Indicate the fraction of queries. See also query fraction.
+Query fraction: The fraction of labels that can be queried. When it is 0.2, at most 150 * 0.2 = 30 will be queried.
+Representative fraction: The fraction of representative instances to be queried. When it is 0.5, 30 * 0.5 = 15 labels will be queried before clustering.
+Distance measure: The distance measure used throughout the project.
+Ensemble algorithm: 
+  Selector: Selecting the current best clustering, and the respective algorithm. Only one algorithm is used for the clustering of each block. We only consider this scheme in this paper.
+  Majority union: Union the clusters obtained by different algorithm. Do not use this option, please. We will consider this scheme in the future.
+Retrospect: Re-cluster the block after its sub-blocks are queried. 
+Normalize: Normalize the data or not. We suggest to turn it on.
+Disorder: Disorder the data or not. Some data are ordered according to the class labels. There some algorithms may take advantage of this to obtain "good" results. We suggest to turn it on.
+Select critical:
+  DP representative: Using the multiplex of the density and distance to master.
+  Max total distance: Using the total distance from queried instances in the block.
+Query amount:
+  Sqrt(n) at once: Query sqrt(n) labels where n is the size of the current block. Please use this option now.
+  Sqrt(n) or impure: If there are labels with different values, split the current block immediately. This option is not  implemented yet.
+Weight for entropy: The weight of instances not queried. Since the label is classified, the weight should be smaller than 1.
+Adaptive ratio for density: For the computation of density. It is relative to the maximal (or pseudo-maximal) distance between instances. Usually it should be less than 0.3.
+Small block threshold: Blocks with size no greater than this value will be handled differently.
+k (for kNN): The k value for the kNN algorithm which handled remaining instances not in pure blocks.
+Process tracking: Track the process in the console.
+Variable tracking: Track variables for detailed debugging.
+Output to file: Output the results to a file in the "results" folder.
+Candidate clustering algorithms:
+  DP-Gaussian: Density peaks, where the Gaussian kernel is employed. In fact, this algorithm is employed for representative instance selection. See also "Representative fraction."
+  kMeans: kMeans 
+  Hierarchical: A hierarchical algorithm considering block balancing. 
+  DBScan: The density computation is the same as DP-Gaussian.
+  FCM: Fuzzy c-means
+  Random walk: Only the closest 2 instances are employed to build the graph. Maybe we should enable the setting of this parameter in the future.
+  DP-cutoff: Density peaks, where the cutoff kernel is employed.
+  

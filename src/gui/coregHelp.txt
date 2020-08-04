@@ -1,0 +1,14 @@
+
+This is the help document of the paper "Semi-Supervised Regression with Co-Training Style Algorithms" 
+Here are the explanation of settings. We will use the iris dataset with 150 instances for illustration.
+The .arff file: The data filename. Please use Browse to select.
+Labeled instance rate: The labeled instance rate in the whole instances.
+Unlabeled instance rate: The unlabeled instance rate in the whole instances.
+The sum of labeled instance rate and unlabeled instance rate must be below the 1.
+The training iterations:The interations of the training process.
+Distance measure: The distance measure used throughout the project.
+Normalize: Normalize the data or not. We suggest to turn it on.
+Disorder: Disorder the data or not. Some data are ordered according to the class labels. There some algorithms may take advantage of this to obtain "good" results. We suggest to turn it on.
+k (for kNN): The k value for the kNN algorithm in differenr cotrainer.
+
+  
