@@ -7,13 +7,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.text.DecimalFormat;
-import java.util.Date;
-
 import javax.swing.JComboBox;
 
 import algorithm.*;
-import common.Common;
 import common.DistanceMeasure;
+import common.SimpleTool;
 import common.SimpleTools;
 import gui.guicommon.*;
 import gui.guidialog.common.ErrorDialog;
@@ -21,26 +19,45 @@ import gui.guidialog.common.HelpDialog;
 import gui.others.*;
 import weka.core.Instances;
 
-public class SporGUI implements ActionListener, ItemListener {
+
+/**
+ * Self-pace co-training using attribute reduct pairs. 
+ * Project: The self-pace co-training regression.
+ * Copyright: The source code and all documents are open and free. PLEASE keep
+ * this header while revising the program. <br>
+ * Organization: <a href=http://www.fansmale.com/>Lab of Machine Learning</a>,
+ * Southwest Petroleum University, Chengdu 610500, China.<br>
+ * @author Yu Li<br>
+ *         Email:1132559357@qq.com<br>
+ *         Date Created£ºAugust 5, 2020 <br>
+ *         Last Modifide: August 8, 2020 <br>
+ * 
+ * @version 1.1
+ */
+public class SporGUI implements ActionListener {
 	/**
 	 * Select the arff file.
 	 */
 	private FilenameField arffFilenameField;
 
 	/**
-	 * The proportion of labels that can be queried.
+	 * The ratio of labeled data.
 	 */
 	private DoubleField labelFractionField;
 
 	/**
-	 * The proportion of representative labels queried in the first round.
+	 * The ratio of test data.
 	 */
 	private DoubleField testFractionField;
-	
 	/**
-	 * The iterations of training process.
+	 * The ratio of unlabeled data.
 	 */
 	private IntegerField trainingIterations;
+
+	/**
+	 * Co-training measures: Coreg, Spor, Plain
+	 */
+	private JComboBox<String> algorithmJComboBox;
 
 	/**
 	 * Distance measures: Euclidean, Manhattan, Mahalanobis
@@ -53,76 +70,53 @@ public class SporGUI implements ActionListener, ItemListener {
 	private JComboBox<String> distanceJComboBox2;
 
 	/**
-	 * Algorithm: SporGUI, Spor
-	 */
-	private JComboBox<String> algorithmJComboBox;
-
-	/**
-	 * Running with ultimate times or not.
-	 */
-	private Checkbox ultimatCheckbox;
-
-	/**
-	 * Get best number of K or not.
-	 */
-	private Checkbox crossValidCheckbox;
-
-	private Checkbox stableTresholdCheckbox;
-
-	/**
 	 * Normalize or not.
 	 */
 	private Checkbox normalizeCheckbox;
 
 	/**
-	 * Self-pace learning or not.
+	 * Checkbox for self-pace term.
 	 */
-	private Checkbox splCheckbox;
+	private Checkbox lamdaCheckbox;
 
 	/**
-	 * AddTherehold in add instances or not.
+	 * Checkbox for gamma term.
 	 */
-	private Checkbox ThresholdCheckbox;
+	private Checkbox gammaCheckbox;
 
 	/**
-	 * AddTherehold in add instances or not.
+	 * Checkbox for step size.
 	 */
-	private DoubleField stableThresholdField;
-	
+	private Checkbox stepSizecheckbox;
+
 	/**
 	 * Disorder or not.
 	 */
 	private Checkbox disorderCheckbox;
 
 	/**
-	 * For density computation of Density Peaks (maybe also others.)
+	 * The step size to control the value of self-pace {@link Terminable#}
 	 */
-	private DoubleField adaptiveRatioDoubleField;
+	private DoubleField stepSizeField;
 
 	/**
-	 * Small block threshold. Small blocks will not be classified using the pure
-	 * criteria.
-	 */
-	private IntegerField smallBlockThresholdIntegerField;
-
-	/**
-	 * The k value for kNN.
+	 * The k value for first Cotrainer.
 	 */
 	private IntegerField kValueIntegerField1;
 	/**
-	 * The k value for kNN.
+	 * The k value for second Cotrainer.
 	 */
 	private IntegerField kValueIntegerField2;
 
 	/**
-	 * For neighbor based weight as well as entropy computation.
+	 * The self-pace term to control the instance selection.
 	 */
-	private DoubleField ThresholdField;
-	
+	private DoubleField lamdaField;
+
 	/**
-	 * For neighbor based weight as well as entropy computation.
+	 * The gamma term to control the instance selection..
 	 */
-	//private DoubleField stableThresholdField;
+	private DoubleField gammaField;
 
 	/**
 	 * Checkbox for variable tracking.
@@ -152,11 +146,10 @@ public class SporGUI implements ActionListener, ItemListener {
 	/**
 	 * The only constructor
 	 */
-
 	public SporGUI() {
 		// A simple frame to contain the dialog
 		Frame mainFrame = new Frame();
-		mainFrame.setTitle("Semi-Supervised Regression with Co-Training Style Algorithm ");
+		mainFrame.setTitle("Self-Paced Co-Training for Regression");
 		// The top part: select arff file.
 		arffFilenameField = new FilenameField(30);
 		arffFilenameField.setText("src/data/kin8nm.arff");
@@ -168,9 +161,16 @@ public class SporGUI implements ActionListener, ItemListener {
 		sourceFilePanel.add(arffFilenameField);
 		sourceFilePanel.add(browseButton);
 
+		Panel algorithmPanel = new Panel();
+		algorithmPanel.add(new Label("The learning measures:"));
+		String[] algorithm = { "Spor", "Coreg", "Plain" };
+		algorithmJComboBox = new JComboBox<String>(algorithm);
+		algorithmJComboBox.setSelectedIndex(0);
+		algorithmPanel.add(algorithmJComboBox);
+
 		Panel numInstancePanel = new Panel();
 		numInstancePanel.setLayout(new FlowLayout());
-		labelFractionField = new DoubleField("0.01", 5);
+		labelFractionField = new DoubleField("0.05", 5);
 		testFractionField = new DoubleField("0.3", 5);
 		numInstancePanel.add(new Label("labeled instance rate:"));
 		numInstancePanel.add(labelFractionField);
@@ -181,19 +181,29 @@ public class SporGUI implements ActionListener, ItemListener {
 
 		Panel tempProcessingPanel = new Panel();
 		trainingIterations = new IntegerField("50");
-		normalizeCheckbox = new Checkbox("normalize", true);
-		disorderCheckbox = new Checkbox("disorder", true);
-		ThresholdCheckbox = new Checkbox("Add Threshold", true);
-		ThresholdField = new DoubleField("0.9");
-		stableThresholdField = new DoubleField("0.025");
-		stableTresholdCheckbox = new Checkbox("Stable Threshold", false);
+		lamdaField = new DoubleField("1", 2);
+		gammaField = new DoubleField("0.3", 2);
+		stepSizeField = new DoubleField("0.005", 2);
 		tempProcessingPanel.add(new Label("The training iterations:"));
 		tempProcessingPanel.add(trainingIterations);
-		tempProcessingPanel.add(new Label("The Threshold:"));
-		tempProcessingPanel.add(ThresholdField);
-		tempProcessingPanel.add(ThresholdCheckbox);
-		tempProcessingPanel.add(normalizeCheckbox);
-		tempProcessingPanel.add(disorderCheckbox);
+		tempProcessingPanel.add(new Label("The lambda:"));
+		tempProcessingPanel.add(lamdaField);
+		tempProcessingPanel.add(new Label("The gamma:"));
+		tempProcessingPanel.add(gammaField);
+		tempProcessingPanel.add(new Label("The stepsize:"));
+		tempProcessingPanel.add(stepSizeField);
+
+		Panel paraMetersPanel = new Panel();
+		normalizeCheckbox = new Checkbox("normalize", true);
+		disorderCheckbox = new Checkbox("disorder", true);
+		lamdaCheckbox = new Checkbox("Add lamda", true);
+		gammaCheckbox = new Checkbox("Add gamma", true);
+		stepSizecheckbox = new Checkbox("Add stepsize", true);
+		paraMetersPanel.add(lamdaCheckbox);
+		paraMetersPanel.add(gammaCheckbox);
+		paraMetersPanel.add(stepSizecheckbox);
+		paraMetersPanel.add(normalizeCheckbox);
+		paraMetersPanel.add(disorderCheckbox);
 
 		Panel tempCotrianerLabel = new Panel();
 		Label cotrainerLabel1 = new Label("The first cotrainer                     ");
@@ -220,37 +230,39 @@ public class SporGUI implements ActionListener, ItemListener {
 		Label knnNumberLabel1 = new Label("K(for Cotrainer1)");
 		Label knnNumberLabel2 = new Label("K(for Cotrainer2)");
 		knnNumberPanel.setLayout(new FlowLayout());
-		kValueIntegerField1 = new IntegerField("5");
-		kValueIntegerField2 = new IntegerField("5");
+		kValueIntegerField1 = new IntegerField("3");
+		kValueIntegerField2 = new IntegerField("3");
 		knnNumberPanel.add(knnNumberLabel1);
 		knnNumberPanel.add(kValueIntegerField1);
 		knnNumberPanel.add(tempSpace);
 		knnNumberPanel.add(knnNumberLabel2);
 		knnNumberPanel.add(kValueIntegerField2);
 
-		processTrackingCheckbox = new Checkbox(" Process tracking ", false);
-		variableTrackingCheckbox = new Checkbox(" Variable tracking ", false);
-		fileOutputCheckbox = new Checkbox(" Output to file ", false);
-		Panel trackingPanel = new Panel();
-		trackingPanel.add(processTrackingCheckbox);
-		trackingPanel.add(variableTrackingCheckbox);
-		trackingPanel.add(fileOutputCheckbox);
+		Panel processTrackingPanel = new Panel();
+		processTrackingCheckbox = new Checkbox("Process tracking", false);
+		variableTrackingCheckbox = new Checkbox("Variable tracking", false);
+		fileOutputCheckbox = new Checkbox("Output to file", false);
+		processTrackingPanel.add(processTrackingCheckbox);
+		processTrackingPanel.add(variableTrackingCheckbox);
+		processTrackingPanel.add(fileOutputCheckbox);
 
 		Panel topPanel = new Panel();
-		topPanel.setLayout(new GridLayout(7, 1));
+		topPanel.setLayout(new GridLayout(10, 1));
 		topPanel.add(sourceFilePanel);
+		topPanel.add(algorithmPanel);
 		topPanel.add(numInstancePanel);
 		topPanel.add(tempProcessingPanel);
+		topPanel.add(paraMetersPanel);
 		topPanel.add(tempCotrianerLabel);
 		topPanel.add(distancePanel);
 		topPanel.add(knnNumberPanel);
-		topPanel.add(trackingPanel);
+		topPanel.add(processTrackingPanel);
 
 		Panel centralPanel = new Panel();
 		centralPanel.setLayout(new GridLayout(1, 1));
 		messageTextArea = new TextArea(80, 40);
 		centralPanel.add(messageTextArea);
-		// The bottom part: ok and exit4
+		// The bottom part: ok and exit
 		repeatTimesField = new IntegerField("20");
 		Panel repeatTimesPanel = new Panel();
 		repeatTimesPanel.add(new Label(" Repeat times: "));
@@ -266,11 +278,11 @@ public class SporGUI implements ActionListener, ItemListener {
 		helpButton.setSize(20, 10);
 		HelpDialog helpDialog = null;
 		try {
-			helpDialog = new HelpDialog("SporGUI algorithm", "src/gui/SporHelp.txt");
+			helpDialog = new HelpDialog("Spor algorithm", "src/gui/SporgHelp.txt");
 			helpButton.addActionListener(helpDialog);
 		} catch (Exception ee) {
 			try {
-				helpDialog = new HelpDialog("SporGUI algorithm", "gui/SporHelp.txt");
+				helpDialog = new HelpDialog("Spor algorithm", "src/gui/SporgHelp.txt");
 				helpButton.addActionListener(helpDialog);
 			} catch (Exception ee2) {
 				ErrorDialog.errorDialog.setMessageAndShow(ee.toString());
@@ -297,142 +309,141 @@ public class SporGUI implements ActionListener, ItemListener {
 		mainFrame.setBackground(GUICommon.MY_COLOR);
 		mainFrame.setVisible(true);
 
-	}
+	}// Of the constructor
 
+	/**
+	 *************************** 
+	 * The entrance method.
+	 * 
+	 * @param args The parameters.
+	 *************************** 
+	 */
 	public static void main(String args[]) {
 		new SporGUI();
 	}// Of main
 
 	/**
 	 *************************** 
-	 * Read the arff file.
+	 * Compare the results.
 	 *************************** 
 	 */
 	public void actionPerformed(ActionEvent ae) {
-		SimpleTools.win = 0;
-		SimpleTools.lose = 0;
-
-		SimpleTools.NumInstances2added = 0;
-		SimpleTools.NumInstances1added = 0;
-		DecimalFormat df = new DecimalFormat("0.000000000");
-		Common.startTime = new Date().getTime();
+		DecimalFormat decimalFormat = new DecimalFormat("0.000000000");
 		messageTextArea.setText("Processing ... Please wait.\r\n");
 		int tempRepeatTimes = repeatTimesField.getValue();
+
+		// Parameters to be transferred to respective objects.
 		int tempIterations = trainingIterations.getValue();
 		String tempFilename = arffFilenameField.getText().trim();
 		int tempCotrainer1DistanceMeasure = 0;
 		int tempCotrainer2DistanceMeasure = 0;
+
 		if (distanceJComboBox1.getSelectedIndex() == 0) {
 			tempCotrainer1DistanceMeasure = DistanceMeasure.EUCLIDEAN;
 		} else {
 			tempCotrainer1DistanceMeasure = DistanceMeasure.MANHATTAN;
-		}
+		} // Of if
 		if (distanceJComboBox2.getSelectedIndex() == 0) {
 			tempCotrainer2DistanceMeasure = DistanceMeasure.EUCLIDEAN;
 		} else {
 			tempCotrainer2DistanceMeasure = DistanceMeasure.MANHATTAN;
-		}
+		} // Of if
 
+		double tempStepSize = stepSizeField.getValue();
 		boolean tempNormalize = normalizeCheckbox.getState();
-
 		boolean tempDisorder = disorderCheckbox.getState();
 		int tempCotrainerKValue1 = kValueIntegerField1.getValue();
 		int tempCotrainerKValue2 = kValueIntegerField2.getValue();
+		double lambda = lamdaField.getValue();
+		
 		String resultMessage = "";
 		String tempString = "";
 		double labelrate = labelFractionField.getValue();
+		double tempError = 0;
+		double gamma = gammaField.getValue();
+		double maxError = 0;
+		double minError = 0;
+		double aveBeforeMse = 0;
+		double aveAfterMse = 0;
 		double wr1 = 0;
 		double wr2 = 0;
-		double wr3 = 0;
+		int wr3 = 0;
 		int wr4 = 0;
-		int wr5 = 0;
+		int firstAddeInstances = 0;
+		int secondAddeInstances = 0;
+
 		try {
-			BufferedReader r = new BufferedReader(new FileReader(tempFilename));
-			Instances tempdata = new Instances(r);
-			r.close();
+			BufferedReader tempBufferedReader = new BufferedReader(new FileReader(tempFilename));
+			Instances tempdata = new Instances(tempBufferedReader);
+			tempBufferedReader.close();
 			tempdata.setClassIndex(tempdata.numAttributes() - 1);
 			if (tempNormalize == true) {
-				// SimpleTools.normalizeDecisionSystem(tempdata);
 				SimpleTool.normalize(tempdata);
-			}
-
-			double Threshold = ThresholdField.getValue();
-			File file = new File("result.txt");
-			FileWriter out = new FileWriter(file);
-
+			} // Of if
+			
+			String tempDateString = SimpleTool.getTimeShort();
+			File tempFile = new File("result" +"("+ tempDateString +")"+ ".txt");
+			FileWriter out = new FileWriter(tempFile);
+			
 			for (int k = 0; k < tempRepeatTimes; k++) {
-				SimpleTools.errorDrop = 0;
-				SimpleTools.lastDrop = 0;
-				SimpleTools.preDrop = 0;
-				SimpleTools.NumInstances1added = 0;
-				SimpleTools.NumInstances2added = 0;
+				messageTextArea.append("Round" + " " + k + " " + "complete" + "\r\n");
 				if (tempDisorder == true) {
 					SimpleTools.disorderData(tempdata);
-				}
+				} // Of if
+
 				Learner tempLearner = new Learner(tempdata, tempCotrainer1DistanceMeasure,
-						tempCotrainer2DistanceMeasure, tempCotrainerKValue1, 100,
-						tempCotrainerKValue2, labelrate, testFractionField.getValue(),
-						tempIterations, Threshold);
-				if (crossValidCheckbox.getState() == true) {
-					tempLearner.firstCotrainer.crossValid();
-					tempLearner.secondCotrainer.crossValid();
-				}
-				
-				if (ThresholdCheckbox.getState() == true
-						&& stableTresholdCheckbox.getState() == false) {
-					tempLearner.Cotraininges();
-				}
-				
-				if (splCheckbox.getState() == false && ThresholdCheckbox.getState() == false
-						&& stableTresholdCheckbox.getState() == false
-						&& ultimatCheckbox.getState() == false) {
-					tempLearner.cotraining();
-				}
-				tempLearner.firstCotrainer.denoise();
-				// tempLearner.firstCotrainer.preDenoise();
-				tempLearner.secondCotrainer.denoise();
-				// tempLearner.secondCotrainer.preDenoise();
-				tempString = tempLearner.Learn(tempLearner.firstCotrainer,
-						tempLearner.secondCotrainer);
+						tempCotrainer2DistanceMeasure, tempCotrainerKValue1, 100, tempCotrainerKValue2, labelrate,
+						testFractionField.getValue(), tempIterations, lambda, tempStepSize, gamma);
+				tempLearner.initializeParameters();
+
+				if (algorithmJComboBox.getSelectedIndex() == 0) {
+					if (lamdaCheckbox.getState() && stepSizecheckbox.getState() && gammaCheckbox.getState()) {
+						tempLearner.spmcoCotraininges();
+					} else if (lamdaCheckbox.getState() && stepSizecheckbox.getState() && !gammaCheckbox.getState()) {
+						tempLearner.splCotraininges();
+					} else if (lamdaCheckbox.getState() && !stepSizecheckbox.getState() && gammaCheckbox.getState()) {
+						tempLearner.stableCotraininges();
+					} else if (lamdaCheckbox.getState() && !stepSizecheckbox.getState() && !gammaCheckbox.getState()) {
+						tempLearner.Cotraininges();
+					} else {
+						tempLearner.Cotraining();
+					} // Of if
+				} else if (algorithmJComboBox.getSelectedIndex() == 1) {
+					tempLearner.Cotraining();
+				} // Of if
+
+				tempString = tempLearner.Learn(tempLearner.firstCotrainer, tempLearner.secondCotrainer);
 				resultMessage += tempString + "\r\n";
-				wr1 = SimpleTools.errorDrop * 100;
-				wr2 = SimpleTools.lastDrop * 100;
-				wr3 = SimpleTools.preDrop;
-				wr4 = (int) (SimpleTools.NumInstances1added);
-				wr5 = (int) (SimpleTools.NumInstances2added);
-				out.write(wr1 + "\t");
+				tempError += tempLearner.errorDrop;
+				maxError = tempLearner.maxErrorDrop;
+				minError = tempLearner.minErrorDrop;
+				wr1 = tempLearner.errorDrop * 100;
+				wr2 = tempLearner.afterMse;
+				wr3 = tempLearner.firstCortaininerAddInstances;
+				wr4 = tempLearner.secondCortaininerAddInstances;
+				out.write(+wr1 + "\t");
 				out.write(wr2 + "\t");
 				out.write(wr3 + "\t");
-				out.write(wr4 + "\t");
-				out.write(wr5 + "\r\n");
-			}
-
-			// }
-
+				out.write(wr4 + "\r\n");
+				firstAddeInstances += wr3;
+				secondAddeInstances += wr4;
+				aveBeforeMse += tempLearner.beforeMse;
+				aveAfterMse += tempLearner.afterMse;
+			} // Of for k
 			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-
-		}
+		} // Of try
 		messageTextArea.append(resultMessage);
-		messageTextArea.append("The denoising wins times:" + SimpleTools.win + "      "
-				+ "The denoising loses times:" + SimpleTools.lose + "\r\n");
-		messageTextArea
-				.append("The max error dorp:" + df.format(SimpleTools.maxErrorDrop) + "\r\n");
-		messageTextArea
-				.append("The min error dorp:" + df.format(SimpleTools.minErrorDrop) + "\r\n");
-		messageTextArea.append("The ave error dorp rate:"
-				+ df.format((SimpleTools.errorDrop / tempRepeatTimes) * 100) + "%" + "\r\n");
-		messageTextArea.append("The average label1 added instance:"
-				+ SimpleTools.NumInstances1added / tempRepeatTimes + "\r\n");
-		messageTextArea.append("The average label2 added instance:"
-				+ SimpleTools.NumInstances2added / tempRepeatTimes + "\r\n");
-	}
-
-	@Override
-	public void itemStateChanged(ItemEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-}
+		messageTextArea.append("The max error dorp:" + decimalFormat.format(maxError) + "\r\n");
+		messageTextArea.append("The min error dorp:" + decimalFormat.format(minError) + "\r\n");
+		messageTextArea.append("The ave mean squared error before co-training:"
+				+ decimalFormat.format(aveBeforeMse / tempRepeatTimes) + "\r\n");
+		messageTextArea.append("The ave mean squared error after co-training:"
+				+ decimalFormat.format(aveAfterMse / tempRepeatTimes) + "\r\n");
+		messageTextArea.append(
+				"The ave error dorp rate:" + decimalFormat.format((tempError / tempRepeatTimes) * 100) + "%" + "\r\n");
+		messageTextArea.append("The average label1 added instance:" + firstAddeInstances / tempRepeatTimes + "\r\n");
+		messageTextArea.append("The average label2 added instance:" + secondAddeInstances / tempRepeatTimes + "\r\n");
+	}// Of actionPerformed
+}// Of class SporGUI

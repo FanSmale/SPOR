@@ -1,0 +1,26 @@
+
+This is the help document of the paper "Self-Paced Co-Training for Regression" 
+Here are the explanation of settings. We will use the kin8nm dataset with 8000 instances for illustration.
+The .arff file: The data filename. Please use Browse to select.
+The algorithm measures£ºThe learning method.
+Plain is the method without co-training process.
+Spor is the current algorithm for this paper.
+Coreg is the traditional co-training regression method.
+Labeled instance rate: The labeled instance rate in the whole instances.
+Unlabeled instance rate: The unlabeled instance rate in the whole instances.
+The sum of labeled instance rate and unlabeled instance rate must be below the 1.
+The training iterations:The interations of the training process.
+The lambda:The self-pace regular term to control the learning process.
+The stepsize:The step size to control the value of lambda.
+The gamma:The self-pace regular term to fix the pseudo label with another regressor.
+Add lambda:Using lambda in co-training process.
+Add stepsize:Is lamda a constant in co-training process.
+Add gamma:Uisng gamma in co-training process.
+Distance measure: The distance measure used throughout the project.
+Normalize: Normalize the data or not. We suggest to turn it on.
+Disorder: Disorder the data or not. Some data are ordered according to the class labels. There some algorithms may take advantage of this to obtain "good" results. We suggest to turn it on.
+k (for kNN): The k value for the kNN algorithm in different cotrainers.
+Process tracking:The process message in learning process.
+Variable tracking:The variable message in learning process.
+Output to file:Output the process tracking and variable tracking as a document.
+  

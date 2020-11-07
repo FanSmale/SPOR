@@ -16,10 +16,10 @@ import weka.core.Instances;
  * Frequently used methods to convert strings, integers, codings, etc.
  * <p>
  * Author: <b>Fan Min</b> minfanphd@163.com, minfan@swpu.edu.cn <br>
- * Copyright: The source code and all documents are open and free. PLEASE keep
- * this header while revising the program. <br>
- * Organization: <a href=http://www.fansmale.com/>Lab of Machine Learning</a>,
- * Southwest Petroleum University, Chengdu 610500, China.<br>
+ * Copyright: The source code and all documents are open and free. PLEASE keep this header while
+ * revising the program. <br>
+ * Organization: <a href=http://www.fansmale.com/>Lab of Machine Learning</a>, Southwest Petroleum
+ * University, Chengdu 610500, China.<br>
  * Project: The cost-sensitive active learning project.
  * <p>
  * Progress: Changing all the time.<br>
@@ -39,8 +39,7 @@ public class SimpleTools extends Object {
 	public static final Random random = new Random();
 
 	/**
-	 * Console output for debugging? If so, output. Otherwise ignore the output
-	 * information.
+	 * Console output for debugging? If so, output. Otherwise ignore the output information.
 	 */
 	static boolean ifConsoleOutput = false;
 
@@ -60,26 +59,17 @@ public class SimpleTools extends Object {
 	public static boolean fileOutput = false;
 
 	/**
+	 * The denoise does not effective times.
+	 */
+	public static int lose = 0;
+
+	/**
 	 ****************** 
 	 * Output for process tracking.
 	 * 
-	 * @param paraString
-	 *            The string for display.
+	 * @param paraString The string for display.
 	 ****************** 
 	 */
-	public static long NumInstances1added=0;
-	public static long NumInstances2added=0;
-	public static double errorDrop=0;
-	public static double maxErrorDrop=0;
-	public static double minErrorDrop=Double.MAX_VALUE;
-	public static int win=0;
-	public static double lastDrop=0;
-	public static double preDrop=0;
-	/**
-	 * The denoise does not effective times.
-	 */
-	public static int lose=0;
-
 	public static void processTrackingOutput(String paraString) {
 		if (processTracking) {
 			System.out.print(paraString);
@@ -90,8 +80,7 @@ public class SimpleTools extends Object {
 	 ****************** 
 	 * Output for variable tracking.
 	 * 
-	 * @param paraString
-	 *            The string for display.
+	 * @param paraString The string for display.
 	 ****************** 
 	 */
 	public static void variableTrackingOutput(String paraString) {
@@ -104,8 +93,7 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Console output.
 	 * 
-	 * @param paraString
-	 *            the given string.
+	 * @param paraString the given string.
 	 ********************************** 
 	 */
 	public static void consoleOutput(String paraString) {
@@ -118,8 +106,7 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Convert a double value into a shorter string.
 	 * 
-	 * @param paraDouble
-	 *            the double value to be converted.
+	 * @param paraDouble the double value to be converted.
 	 * @return A shorter representation of the double value.
 	 ********************************** 
 	 */
@@ -131,10 +118,8 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Convert a double value into a shorter string.
 	 * 
-	 * @param paraDouble
-	 *            the double value to be converted.
-	 * @param paraLength
-	 *            the length of reserved double.
+	 * @param paraDouble the double value to be converted.
+	 * @param paraLength the length of reserved double.
 	 * @return A shorter representation of the double value.
 	 ********************************** 
 	 */
@@ -161,25 +146,20 @@ public class SimpleTools extends Object {
 
 	/**
 	 ********************************** 
-	 * Convert a string with commas into a string array, blanks adjacent with
-	 * commas are deleted. If the string bewteen two adjacent commas are blank
-	 * or contains only space char ' ', then an exception will be thrown.<br>
-	 * For example, "a, bc, def, g" will be converted into a string array with 4
-	 * elements "a", "bc", "def" and "g".
+	 * Convert a string with commas into a string array, blanks adjacent with commas are deleted. If the
+	 * string bewteen two adjacent commas are blank or contains only space char ' ', then an exception
+	 * will be thrown.<br>
+	 * For example, "a, bc, def, g" will be converted into a string array with 4 elements "a", "bc",
+	 * "def" and "g".
 	 * 
-	 * @param paraString
-	 *            The source string
+	 * @param paraString The source string
 	 * @return A string array.
-	 * @throws Exception
-	 *             Exception for illegal data.
+	 * @throws Exception Exception for illegal data.
 	 * @see #stringArrayToString(java.lang.String[])
 	 ********************************** 
 	 */
 	public static String[] stringToStringArray(String paraString) throws Exception {
-		/*
-		 * Convert this string into an array such that another method could be
-		 * invoked.
-		 */
+		/* Convert this string into an array such that another method could be invoked. */
 		int tempCounter = 1;
 		for (int i = 0; i < paraString.length(); i++) {
 			if (paraString.charAt(i) == ',') {
@@ -208,8 +188,7 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Convert a string array into a string, elements are separated by commas.
 	 * 
-	 * @param prmStringArray
-	 *            The source string array
+	 * @param prmStringArray The source string array
 	 * @return converted string.
 	 * @see #stringToStringArray(java.lang.String)
 	 ********************************** 
@@ -228,12 +207,10 @@ public class SimpleTools extends Object {
 
 	/**
 	 ********************************** 
-	 * Add single quotes for a string (may be an array, elements are separated
-	 * by commas). This is needed in some SQL statements. For example, "ab,c,d"
-	 * will be converted into "ab','c','d".
+	 * Add single quotes for a string (may be an array, elements are separated by commas). This is
+	 * needed in some SQL statements. For example, "ab,c,d" will be converted into "ab','c','d".
 	 * 
-	 * @param prmStringArray
-	 *            The source string
+	 * @param prmStringArray The source string
 	 * @return converted string.
 	 ********************************** 
 	 */
@@ -252,14 +229,11 @@ public class SimpleTools extends Object {
 
 	/**
 	 ********************************** 
-	 * If the string quisi-array (elements are separated by commas) contains
-	 * respective attribute.<br>
+	 * If the string quisi-array (elements are separated by commas) contains respective attribute.<br>
 	 * For exampe "abc, de" contains "de", but it does not contain "d".
 	 * 
-	 * @param prmStringArray
-	 *            The string quisi-array (elements are separated by commas).
-	 * @param paraString
-	 *            Respect string.
+	 * @param prmStringArray The string quisi-array (elements are separated by commas).
+	 * @param paraString     Respect string.
 	 * @return If it is contained.
 	 * @see #stringToStringArray(java.lang.String)
 	 ********************************** 
@@ -284,10 +258,8 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Join two attribute strings, separated by a comma.<br>
 	 * 
-	 * @param prmFirstString
-	 *            The first attribute string
-	 * @param prmSecondString
-	 *            The second attribute string
+	 * @param prmFirstString  The first attribute string
+	 * @param prmSecondString The second attribute string
 	 * @return joined string.
 	 ********************************** 
 	 */
@@ -302,18 +274,14 @@ public class SimpleTools extends Object {
 
 	/**
 	 ********************************** 
-	 * Convert a string with delimiters (such as commas or semi-commas) into a
-	 * string array.<br>
-	 * This method is more generalized than stringToStringArray because the
-	 * latter only permits commas to be delimiters. For more detail please
-	 * contact <A href="mailto:qiheliu@uestc.edu.cn">Liu Qihe</A>
+	 * Convert a string with delimiters (such as commas or semi-commas) into a string array.<br>
+	 * This method is more generalized than stringToStringArray because the latter only permits commas
+	 * to be delimiters. For more detail please contact <A href="mailto:qiheliu@uestc.edu.cn">Liu
+	 * Qihe</A>
 	 * 
-	 * @param paraString
-	 *            The given string
-	 * @param paraDelimiter
-	 *            The given delimiter
-	 * @param paraReturnTokens
-	 *            Is the delimiter permitted after convertion.
+	 * @param paraString       The given string
+	 * @param paraDelimiter    The given delimiter
+	 * @param paraReturnTokens Is the delimiter permitted after convertion.
 	 * @return string array separated by commas
 	 ********************************** 
 	 */
@@ -335,13 +303,11 @@ public class SimpleTools extends Object {
 
 	/**
 	 ********************************** 
-	 * Remove string from a string array, and return a string. For more detail
-	 * please contact <A href="mailto:qiheliu@uestc.edu.cn">Liu Qihe</A>
+	 * Remove string from a string array, and return a string. For more detail please contact
+	 * <A href="mailto:qiheliu@uestc.edu.cn">Liu Qihe</A>
 	 * 
-	 * @param paraString
-	 *            字符串
-	 * @param index
-	 *            去掉串的位\uFFFD
+	 * @param paraString 字符串
+	 * @param index      去掉串的位\uFFFD
 	 * @return 字符串，属性值之间用逗号分隔.
 	 ***********************************/
 	public static String generateString(String[] paraString, int index) {
@@ -360,8 +326,7 @@ public class SimpleTools extends Object {
 	 ********************************* 
 	 * GB2312 to UNICODE. Use this one if Chinese characters is a mess.
 	 * 
-	 * @param paraString
-	 *            a GB2312 string
+	 * @param paraString a GB2312 string
 	 * @return a UNICODE string.
 	 * @see #UNICODEToGB2312(java.lang.String)
 	 ********************************* 
@@ -382,8 +347,7 @@ public class SimpleTools extends Object {
 	 ********************************* 
 	 * UNICODE to GB2312. Use this one if Chinese characters is a mess.
 	 * 
-	 * @param paraString
-	 *            a UNICODE string.
+	 * @param paraString a UNICODE string.
 	 * @return a GB2312 string.
 	 * @see #GB2312ToUNICODE(java.lang.String)
 	 ********************************* 
@@ -413,17 +377,12 @@ public class SimpleTools extends Object {
 	 * One string minus another, essentially corresponding string arrays.<br>
 	 * E.g., "ab,cd,efa" minus "ab,efa" gets "cd"
 	 * 
-	 * @param prmFirstString
-	 *            The first string.
-	 * @param prmSecondString
-	 *            The second string.
+	 * @param prmFirstString  The first string.
+	 * @param prmSecondString The second string.
 	 * @return A result string.
-	 * @throws Exception
-	 *             if the first string does not contain an element of the second
-	 *             string, e.g., "ab, cd" minus "ab, de". #see
-	 *             scheme.SymbolicPartition
-	 *             .computeOptimalPartitionReduct(java.lang.String,
-	 *             java.lang.String, int)
+	 * @throws Exception if the first string does not contain an element of the second string, e.g.,
+	 *                   "ab, cd" minus "ab, de". #see scheme.SymbolicPartition
+	 *                   .computeOptimalPartitionReduct(java.lang.String, java.lang.String, int)
 	 ********************************** 
 	 */
 	public static String stringMinusString(String prmFirstString, String prmSecondString) throws Exception {
@@ -468,15 +427,11 @@ public class SimpleTools extends Object {
 	 * One string union another, essentially corresponding string sets.<br>
 	 * E.g., "ab,cd,efa" union "ab,ee" gets "ab,cd,efa, ee"
 	 * 
-	 * @param prmFirstString
-	 *            The first string.
-	 * @param prmSecondString
-	 *            The second string.
-	 * @return A result string. #see
-	 *         scheme.Reduction.computeOptimalMReductByEntropy(java.lang.String,
+	 * @param prmFirstString  The first string.
+	 * @param prmSecondString The second string.
+	 * @return A result string. #see scheme.Reduction.computeOptimalMReductByEntropy(java.lang.String,
 	 *         java.lang.String, java.lang.String)
-	 * @throws Exception
-	 *             The exception generated by stringToStringArray(String).
+	 * @throws Exception The exception generated by stringToStringArray(String).
 	 ********************************** 
 	 */
 	public static String stringUnionString(String prmFirstString, String prmSecondString) throws Exception {
@@ -513,8 +468,7 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Judge whether or not the given string is null/empty.
 	 * 
-	 * @param paraString
-	 *            The given string.
+	 * @param paraString The given string.
 	 * @return True if it is null or empty.
 	 *************************** 
 	 */
@@ -530,8 +484,7 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Judge whether or not the given string is specified.
 	 * 
-	 * @param paraString
-	 *            The given string.
+	 * @param paraString The given string.
 	 * @return True if the string is empty or "unspecified."
 	 *************************** 
 	 */
@@ -545,20 +498,14 @@ public class SimpleTools extends Object {
 
 	/**
 	 *************************** 
-	 * Read an integer array from a given string. Integers are separated by
-	 * separators. Author Fan Min.
+	 * Read an integer array from a given string. Integers are separated by separators. Author Fan Min.
 	 * 
-	 * @param paraString
-	 *            The given string.
-	 * @param paraNumberOfInts
-	 *            The number of integer to read from the string. If there are
-	 *            more integers, just ignore them.
-	 * @param paraSeparator
-	 *            The separator of data, blank and commas are most commonly uses
-	 *            ones.
+	 * @param paraString       The given string.
+	 * @param paraNumberOfInts The number of integer to read from the string. If there are more
+	 *                         integers, just ignore them.
+	 * @param paraSeparator    The separator of data, blank and commas are most commonly uses ones.
 	 * @return The constructed array.
-	 * @throws Exception
-	 *             for format.
+	 * @throws Exception for format.
 	 *************************** 
 	 */
 	public static int[] parseIntArray(String paraString, int paraNumberOfInts, char paraSeparator) throws Exception {
@@ -596,8 +543,7 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * An int to an attribute subset. Author Fan Min.
 	 * 
-	 * @param paraInt
-	 *            The given integer representing an attribute subset.
+	 * @param paraInt The given integer representing an attribute subset.
 	 * @return The attribute subset in a string.
 	 *************************** 
 	 */
@@ -626,10 +572,8 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * An int array to an attribute subset. Author Fan Min.
 	 * 
-	 * @param paraIntArray
-	 *            The given integer array an attribute subset.
-	 * @param paraLength
-	 *            The size of the subset.
+	 * @param paraIntArray The given integer array an attribute subset.
+	 * @param paraLength   The size of the subset.
 	 * @return The attribute subset in a string.
 	 *************************** 
 	 */
@@ -650,8 +594,7 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * An int array to an int value. For example, [0, 2] will be binary 101 = 5.
 	 * 
-	 * @param paraIntArray
-	 *            The given integer array indicating which positions is 1.
+	 * @param paraIntArray The given integer array indicating which positions is 1.
 	 * @return An int value.
 	 *************************** 
 	 */
@@ -669,11 +612,9 @@ public class SimpleTools extends Object {
 
 	/**
 	 *************************** 
-	 * An int array to an long value. For example, [0, 2] will be binary 101 =
-	 * 5.
+	 * An int array to an long value. For example, [0, 2] will be binary 101 = 5.
 	 * 
-	 * @param paraIntArray
-	 *            The given integer representing an attribute subset.
+	 * @param paraIntArray The given integer representing an attribute subset.
 	 * @return An int value.
 	 * @see #intArrayToInt(int[])
 	 *************************** 
@@ -694,8 +635,7 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * A long to an attribute subset.
 	 * 
-	 * @param paraLong
-	 *            The given integer representing an attribute subset.
+	 * @param paraLong The given integer representing an attribute subset.
 	 * @return The attribute subset in a string.
 	 *************************** 
 	 */
@@ -722,14 +662,10 @@ public class SimpleTools extends Object {
 
 	/**
 	 *************************** 
-	 * Convert an integer array into a string. Integers are separated by
-	 * separators. Author Fan Min.
+	 * Convert an integer array into a string. Integers are separated by separators. Author Fan Min.
 	 * 
-	 * @param paraArray
-	 *            The given array.
-	 * @param paraSeparator
-	 *            The separator of data, blank and commas are most commonly uses
-	 *            ones.
+	 * @param paraArray     The given array.
+	 * @param paraSeparator The separator of data, blank and commas are most commonly uses ones.
 	 * @return The constructed String.
 	 *************************** 
 	 */
@@ -754,14 +690,10 @@ public class SimpleTools extends Object {
 
 	/**
 	 *************************** 
-	 * Convert an integer matrix into a string. Integers are separated by
-	 * separators. Author Xiangju Li.
+	 * Convert an integer matrix into a string. Integers are separated by separators. Author Xiangju Li.
 	 * 
-	 * @param paraArray
-	 *            The given array.
-	 * @param paraSeparator
-	 *            The separator of data, blank and commas are most commonly uses
-	 *            ones.
+	 * @param paraArray     The given array.
+	 * @param paraSeparator The separator of data, blank and commas are most commonly uses ones.
 	 * @return The constructed String.
 	 *************************** 
 	 */
@@ -782,21 +714,15 @@ public class SimpleTools extends Object {
 
 	/**
 	 *************************** 
-	 * Read a double array from a given string. Double values are separated by
-	 * separators. <br>
+	 * Read a double array from a given string. Double values are separated by separators. <br>
 	 * Author Fan Min.
 	 * 
-	 * @param paraString
-	 *            The given string.
-	 * @param paraNumberOfDoubles
-	 *            The number of integer to read from the string. If there are
-	 *            more integers, just ignore them.
-	 * @param paraSeparator
-	 *            The separator of data, blank and commas are most commonly uses
-	 *            ones.
+	 * @param paraString          The given string.
+	 * @param paraNumberOfDoubles The number of integer to read from the string. If there are more
+	 *                            integers, just ignore them.
+	 * @param paraSeparator       The separator of data, blank and commas are most commonly uses ones.
 	 * @return The constructed array.
-	 * @throws Exception
-	 *             If index out of bounds.
+	 * @throws Exception If index out of bounds.
 	 *************************** 
 	 */
 	public static double[] parseDoubleArray(String paraString, int paraNumberOfDoubles, char paraSeparator)
@@ -835,14 +761,12 @@ public class SimpleTools extends Object {
 
 	/**
 	 *************************** 
-	 * Read a double array from a given string. The number of doubles are not
-	 * given, so I will parse as many double values as possible. The seperator
-	 * is not indicated, so comma is the first candidate, and blank is the
-	 * second. <br>
+	 * Read a double array from a given string. The number of doubles are not given, so I will parse as
+	 * many double values as possible. The seperator is not indicated, so comma is the first candidate,
+	 * and blank is the second. <br>
 	 * Author Fan Min.
 	 * 
-	 * @param paraString
-	 *            The given string.
+	 * @param paraString The given string.
 	 * @return The constructed array.
 	 * @throws Exception if the array length exceeds the bound.
 	 *************************** 
@@ -892,14 +816,11 @@ public class SimpleTools extends Object {
 
 	/**
 	 *************************** 
-	 * Conver a double array into a string. Doubles are separated by blanks.
-	 * Author Fan Min.
+	 * Conver a double array into a string. Doubles are separated by blanks. Author Fan Min.
 	 * 
-	 * @param paraArray
-	 *            The given array.
+	 * @param paraArray The given array.
 	 * @return The constructed String.
-	 * @throws Exception
-	 *             for empty array.
+	 * @throws Exception for empty array.
 	 *************************** 
 	 */
 	public static String doubleArrayToString(double[] paraArray) throws Exception {
@@ -908,17 +829,12 @@ public class SimpleTools extends Object {
 
 	/**
 	 *************************** 
-	 * Conver a double array into a string. Doubles are separated by separators.
-	 * Author Fan Min.
+	 * Conver a double array into a string. Doubles are separated by separators. Author Fan Min.
 	 * 
-	 * @param paraArray
-	 *            The given array.
-	 * @param paraSeparator
-	 *            The separator of data, blank and commas are most commonly uses
-	 *            ones.
+	 * @param paraArray     The given array.
+	 * @param paraSeparator The separator of data, blank and commas are most commonly uses ones.
 	 * @return The constructed String.
-	 * @throws Exception
-	 *             for null or empty array.
+	 * @throws Exception for null or empty array.
 	 *************************** 
 	 */
 	public static String doubleArrayToString(double[] paraArray, char paraSeparator) throws Exception {
@@ -935,14 +851,10 @@ public class SimpleTools extends Object {
 
 	/**
 	 *************************** 
-	 * Convert a boolean array into a string. Booleans are separated by
-	 * separators.
+	 * Convert a boolean array into a string. Booleans are separated by separators.
 	 * 
-	 * @param paraArray
-	 *            The given array.
-	 * @param paraSeparator
-	 *            The separator of data, blank and commas are most commonly uses
-	 *            ones.
+	 * @param paraArray     The given array.
+	 * @param paraSeparator The separator of data, blank and commas are most commonly uses ones.
 	 * @return The constructed String.
 	 *************************** 
 	 */
@@ -963,18 +875,13 @@ public class SimpleTools extends Object {
 
 	/**
 	 *************************** 
-	 * Convert a string array into a boolean array. Booleans are separated by
-	 * separators. Only support 0 and 1 in the string. TRUE and FALSE are not
-	 * supported.
+	 * Convert a string array into a boolean array. Booleans are separated by separators. Only support 0
+	 * and 1 in the string. TRUE and FALSE are not supported.
 	 * 
-	 * @param paraString
-	 *            The given string.
-	 * @param paraSeparator
-	 *            The separator of data, blank and commas are most commonly uses
-	 *            ones.
+	 * @param paraString    The given string.
+	 * @param paraSeparator The separator of data, blank and commas are most commonly uses ones.
 	 * @return The constructed String.
-	 * @throws Exception
-	 *             for wrong format.
+	 * @throws Exception for wrong format.
 	 *************************** 
 	 */
 	public static boolean[] stringToBooleanArray(String paraString, char paraSeparator) throws Exception {
@@ -1011,8 +918,7 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Conver a boolean array into a string. Booleans are separated by commas.
 	 * 
-	 * @param paraArray
-	 *            The given array.
+	 * @param paraArray The given array.
 	 * @return The constructed String.
 	 *************************** 
 	 */
@@ -1036,16 +942,14 @@ public class SimpleTools extends Object {
 
 	/**
 	 *************************** 
-	 * Read a int array from a given string. The number of ints are not given,
-	 * so I will parse as many int values as possible. The seperator is not
-	 * indicated, so comma is the first candidate, and blank is the second. <br>
+	 * Read a int array from a given string. The number of ints are not given, so I will parse as many
+	 * int values as possible. The seperator is not indicated, so comma is the first candidate, and
+	 * blank is the second. <br>
 	 * Author Fan Min.
 	 * 
-	 * @param paraString
-	 *            The given string.
+	 * @param paraString The given string.
 	 * @return The constructed array.
-	 * @throws Exception
-	 *             For format error.
+	 * @throws Exception For format error.
 	 *************************** 
 	 */
 	public static int[] parseIntArray(String paraString) throws Exception {
@@ -1102,11 +1006,9 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Read a double value from a given string after the colon. <br>
 	 * 
-	 * @param paraString
-	 *            The given string.
+	 * @param paraString The given string.
 	 * @return A double value.
-	 * @throws Exception
-	 *             If cannot be parsed.
+	 * @throws Exception If cannot be parsed.
 	 *************************** 
 	 */
 	public static double parseDoubleValueAfterColon(String paraString) throws Exception {
@@ -1124,8 +1026,7 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Read an int value from a given string after the colon. <br>
 	 * 
-	 * @param paraString
-	 *            The given string.
+	 * @param paraString The given string.
 	 * @return A double value.
 	 *************************** 
 	 */
@@ -1142,13 +1043,11 @@ public class SimpleTools extends Object {
 
 	/**
 	 *************************** 
-	 * Compress an int array so that no duplicate elements, no redundant elemnts
-	 * exist, and it is in an ascendent order. <br>
+	 * Compress an int array so that no duplicate elements, no redundant elemnts exist, and it is in an
+	 * ascendent order. <br>
 	 * 
-	 * @param paraIntArray
-	 *            The given int array.
-	 * @param paraLength
-	 *            The effecitive length of the given int array.
+	 * @param paraIntArray The given int array.
+	 * @param paraLength   The effecitive length of the given int array.
 	 * @return The constructed array.
 	 *************************** 
 	 */
@@ -1196,13 +1095,11 @@ public class SimpleTools extends Object {
 
 	/**
 	 *************************** 
-	 * Compress a long array so that no duplicate elements, no redundant elemnts
-	 * exist, and it is in an ascendent order. <br>
+	 * Compress a long array so that no duplicate elements, no redundant elemnts exist, and it is in an
+	 * ascendent order. <br>
 	 * 
-	 * @param paraLongArray
-	 *            The given long array.
-	 * @param paraLength
-	 *            The effecitive length of the given long array.
+	 * @param paraLongArray The given long array.
+	 * @param paraLength    The effecitive length of the given long array.
 	 * @return The constructed array.
 	 *************************** 
 	 */
@@ -1252,16 +1149,11 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Subreduct sort according to respective measure.
 	 * 
-	 * @param paraData
-	 *            The data, it may represent a subreduct
-	 * @param paraMeasuredValues
-	 *            The measured values of the data
-	 * @param paraLeft
-	 *            The left index.
-	 * @param paraRight
-	 *            The right index.
-	 * @throws Exception
-	 *             For valueBasedLongArrayPartition().
+	 * @param paraData           The data, it may represent a subreduct
+	 * @param paraMeasuredValues The measured values of the data
+	 * @param paraLeft           The left index.
+	 * @param paraRight          The right index.
+	 * @throws Exception For valueBasedLongArrayPartition().
 	 ********************************** 
 	 */
 	public static void measureBasedQuickSort(long[] paraData, int[] paraMeasuredValues, int paraLeft, int paraRight)
@@ -1308,10 +1200,8 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Adjust a long array length.
 	 * 
-	 * @param paraLongArray
-	 *            The given long array.
-	 * @param length
-	 *            The real length of the given long array.
+	 * @param paraLongArray The given long array.
+	 * @param length        The real length of the given long array.
 	 * @return An identical long array.
 	 *************************** 
 	 */
@@ -1327,8 +1217,7 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Copy boolean array
 	 * 
-	 * @param paramBooleanArray
-	 *            The given boolean array.
+	 * @param paramBooleanArray The given boolean array.
 	 * @return An identical boolean array.
 	 *************************** 
 	 */
@@ -1344,8 +1233,7 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * The exponential of an int.
 	 * 
-	 * @param paraExponential
-	 *            the exponential.
+	 * @param paraExponential the exponential.
 	 * @return An identical boolean array.
 	 *************************** 
 	 */
@@ -1361,8 +1249,7 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * The exponential of an int.
 	 * 
-	 * @param paraExponential
-	 *            the exponential.
+	 * @param paraExponential the exponential.
 	 * @return An identical boolean array.
 	 *************************** 
 	 */
@@ -1376,11 +1263,9 @@ public class SimpleTools extends Object {
 
 	/**
 	 *************************** 
-	 * Who is who's child. Nodes are by integers, and attributes are indicated
-	 * by bits.
+	 * Who is who's child. Nodes are by integers, and attributes are indicated by bits.
 	 * 
-	 * @param paraBits
-	 *            How many bits (attributes).
+	 * @param paraBits How many bits (attributes).
 	 * @return An array of children.
 	 *************************** 
 	 */
@@ -1407,18 +1292,14 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Convert a long value to a integer array.
 	 * 
-	 * @param paraLong
-	 *            The given long value.
-	 * @param paraLength
-	 *            The given length of the array.
+	 * @param paraLong   The given long value.
+	 * @param paraLength The given length of the array.
 	 * @return An integer array to indicate which positions (bits) are included.
 	 *************************** 
 	 */
 	public static int[] longToIntArray(long paraLong, int paraLength) {
 		int[] result = new int[paraLength];
-		/*
-		 * if (paraLong < 0) { return null; //No need to throw an exception. }
-		 */
+		/* if (paraLong < 0) { return null; //No need to throw an exception. } */
 		int currentIndex = 0;
 		long tempLong = paraLong;
 		while (tempLong > 0) {
@@ -1437,10 +1318,8 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Convert a long value to a boolean array.
 	 * 
-	 * @param paraLong
-	 *            The given long value.
-	 * @param paraLength
-	 *            The given length of the array.
+	 * @param paraLong   The given long value.
+	 * @param paraLength The given length of the array.
 	 * @return A boolean array to indicate which positions (bits) are included.
 	 *************************** 
 	 */
@@ -1464,11 +1343,9 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Convert a boolean array to a long value.
 	 * 
-	 * @param paraBooleanArray
-	 *            The given boolean array.
+	 * @param paraBooleanArray The given boolean array.
 	 * @return A long to indicate which positions (bits) are included.
-	 * @throws Exception
-	 *             for array longer than that can be handled.
+	 * @throws Exception for array longer than that can be handled.
 	 *************************** 
 	 */
 	public static long booleanArrayToLong(boolean[] paraBooleanArray) throws Exception {
@@ -1492,10 +1369,8 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Compute the attribute subset size.
 	 * 
-	 * @param paraLong
-	 *            The given long value.
-	 * @param paraLength
-	 *            The size of all attributes.
+	 * @param paraLong   The given long value.
+	 * @param paraLength The size of all attributes.
 	 * @return the size of the attribute subset.
 	 *************************** 
 	 */
@@ -1517,8 +1392,7 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Compute the attribute subset size.
 	 * 
-	 * @param paraBooleanArray
-	 *            The given boolean array.
+	 * @param paraBooleanArray The given boolean array.
 	 * @return the size of the attribute subset.
 	 *************************** 
 	 */
@@ -1537,10 +1411,8 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Convert an integer value to a boolean array.
 	 * 
-	 * @param paraInt
-	 *            The given long value.
-	 * @param paraLength
-	 *            The given length of the array.
+	 * @param paraInt    The given long value.
+	 * @param paraLength The given length of the array.
 	 * @return A boolean array to indicate which positions (bits) are included.
 	 *************************** 
 	 */
@@ -1564,11 +1436,9 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Convert a boolean array to an int value.
 	 * 
-	 * @param paraBooleanArray
-	 *            The given boolean array.
+	 * @param paraBooleanArray The given boolean array.
 	 * @return An integer to indicate which positions (bits) are included.
-	 * @throws Exception
-	 *             for long array.
+	 * @throws Exception for long array.
 	 *************************** 
 	 */
 	public static int booleanArrayToInt(boolean[] paraBooleanArray) throws Exception {
@@ -1593,8 +1463,7 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Print an int array, simply for test.
 	 * 
-	 * @param paraIntArray
-	 *            The given int array.
+	 * @param paraIntArray The given int array.
 	 *************************** 
 	 */
 	public static void printIntArray(int[] paraIntArray) {
@@ -1614,8 +1483,7 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Print a long array, simply for test.
 	 * 
-	 * @param paraLongArray
-	 *            The given long array.
+	 * @param paraLongArray The given long array.
 	 *************************** 
 	 */
 	public static void printLongArray(long[] paraLongArray) {
@@ -1628,8 +1496,7 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Print a long array, zero is not printed. Simply for test.
 	 * 
-	 * @param paraLongArray
-	 *            The given long array.
+	 * @param paraLongArray The given long array.
 	 *************************** 
 	 */
 	public static void printLongArrayNoZero(long[] paraLongArray) {
@@ -1644,8 +1511,7 @@ public class SimpleTools extends Object {
 	 ************************* 
 	 * Print all reducts.
 	 * 
-	 * @param paraAllReducts
-	 *            The given array to print.
+	 * @param paraAllReducts The given array to print.
 	 ************************* 
 	 */
 	public static void printAllReducts(boolean[][] paraAllReducts) {
@@ -1665,8 +1531,7 @@ public class SimpleTools extends Object {
 	 ************************* 
 	 * Print a boolean array.
 	 * 
-	 * @param paraBooleanArray
-	 *            The boolean array.
+	 * @param paraBooleanArray The boolean array.
 	 ************************* 
 	 */
 	public static void printBooleanArray(boolean[] paraBooleanArray) {
@@ -1685,8 +1550,7 @@ public class SimpleTools extends Object {
 	 ************************* 
 	 * Print a boolean matrix.
 	 * 
-	 * @param paraBooleanMatrix
-	 *            The boolean matrix.
+	 * @param paraBooleanMatrix The boolean matrix.
 	 ************************* 
 	 */
 	public static void printBooleanMatrix(boolean[][] paraBooleanMatrix) {
@@ -1707,8 +1571,7 @@ public class SimpleTools extends Object {
 	 ************************* 
 	 * Print a double array.
 	 * 
-	 * @param paraDoubleArray
-	 *            The given array.
+	 * @param paraDoubleArray The given array.
 	 ************************* 
 	 */
 	public static void printDoubleArray(double[] paraDoubleArray) {
@@ -1722,14 +1585,10 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Swap two value in a double array.
 	 * 
-	 * @param paraDoubleArray
-	 *            The given double array.
-	 * @param src
-	 *            The first index of the double array.
-	 * @param dest
-	 *            The second index of the double array.
-	 * @throws Exception
-	 *             for index out of bounds.
+	 * @param paraDoubleArray The given double array.
+	 * @param src             The first index of the double array.
+	 * @param dest            The second index of the double array.
+	 * @throws Exception for index out of bounds.
 	 ********************************** 
 	 */
 	public static void swap(double[] paraDoubleArray, int src, int dest) throws Exception {
@@ -1743,14 +1602,10 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Swap two value in a long array.
 	 * 
-	 * @param paraLongArray
-	 *            The given long array.
-	 * @param src
-	 *            The first index of the long array.
-	 * @param dest
-	 *            The second index of the long array.
-	 * @throws Exception
-	 *             if index out of bounds.
+	 * @param paraLongArray The given long array.
+	 * @param src           The first index of the long array.
+	 * @param dest          The second index of the long array.
+	 * @throws Exception if index out of bounds.
 	 ********************************** 
 	 */
 	public static void swap(long[] paraLongArray, int src, int dest) throws Exception {
@@ -1764,14 +1619,10 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Swap two value in a long array.
 	 * 
-	 * @param paraLongArray
-	 *            The given long array.
-	 * @param src
-	 *            The first index of the long array.
-	 * @param dest
-	 *            The second index of the long array.
-	 * @throws Exception
-	 *             For index out of bounds.
+	 * @param paraLongArray The given long array.
+	 * @param src           The first index of the long array.
+	 * @param dest          The second index of the long array.
+	 * @throws Exception For index out of bounds.
 	 ********************************** 
 	 */
 	public static void swap(int[] paraLongArray, int src, int dest) throws Exception {
@@ -1785,10 +1636,8 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Long array to boolean matrix.
 	 * 
-	 * @param paraLongArray
-	 *            The given long array.
-	 * @param paraLength
-	 *            The length of each long.
+	 * @param paraLongArray The given long array.
+	 * @param paraLength    The length of each long.
 	 * @return the boolean matrix
 	 ********************************** 
 	 */
@@ -1811,31 +1660,24 @@ public class SimpleTools extends Object {
 	 * Write a message to a new file.
 	 * 
 	 * @paraFilename The given filename.
-	 * @paraMessage The givean message string. public static void
-	 *              writeFile(String paraFilename,String paraMessage) throws
-	 *              Exception{
+	 * @paraMessage The givean message string. public static void writeFile(String paraFilename,String
+	 *              paraMessage) throws Exception{
 	 * 
-	 *              File resultFile = new File(paraFilename); if
-	 *              (resultFile.exists()) { resultFile.delete(); }
-	 *              resultFile.createNewFile(); PrintWriter writer = new
-	 *              PrintWriter(new FileOutputStream(resultFile));
-	 *              writer.print(paraMessage); writer.flush(); writer.close();
-	 *              }//Of writeFile
+	 *              File resultFile = new File(paraFilename); if (resultFile.exists()) {
+	 *              resultFile.delete(); } resultFile.createNewFile(); PrintWriter writer = new
+	 *              PrintWriter(new FileOutputStream(resultFile)); writer.print(paraMessage);
+	 *              writer.flush(); writer.close(); }//Of writeFile
 	 */
 
 	/**
 	 ********************************** 
 	 * Is the first set a subset of the second one.
 	 * 
-	 * @param paraFirstSet
-	 *            The first set in long.
-	 * @param paraSecondSet
-	 *            The second set in long.
-	 * @param paraAttributes
-	 *            Number of attributes.
+	 * @param paraFirstSet   The first set in long.
+	 * @param paraSecondSet  The second set in long.
+	 * @param paraAttributes Number of attributes.
 	 * @return is the first set a subset of the second one?
-	 * @throws Exception
-	 *             That is generated by longToBooleanArray() or isSubset().
+	 * @throws Exception That is generated by longToBooleanArray() or isSubset().
 	 ********************************** 
 	 */
 	public static boolean isSubset(long paraFirstSet, long paraSecondSet, int paraAttributes) throws Exception {
@@ -1848,13 +1690,10 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Is the first set a subset of the second one.
 	 * 
-	 * @param paraFirstSet
-	 *            The first set in int array.
-	 * @param paraSecondSet
-	 *            The second set in int array.
+	 * @param paraFirstSet  The first set in int array.
+	 * @param paraSecondSet The second set in int array.
 	 * @return is the first set a subset of the second one?
-	 * @throws Exception
-	 *             for emptyset.
+	 * @throws Exception for emptyset.
 	 ********************************** 
 	 */
 	public static boolean isSubset(int[] paraFirstSet, int[] paraSecondSet) throws Exception {
@@ -1886,13 +1725,10 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Is the first set a subset of the second one.
 	 * 
-	 * @param paraFirstSet
-	 *            The first set in boolean array.
-	 * @param paraSecondSet
-	 *            The second set in boolean array.
+	 * @param paraFirstSet  The first set in boolean array.
+	 * @param paraSecondSet The second set in boolean array.
 	 * @return is the first set a subset of the second one?
-	 * @throws Exception
-	 *             For empty sets.
+	 * @throws Exception For empty sets.
 	 ********************************** 
 	 */
 	public static boolean isSubset(boolean[] paraFirstSet, boolean[] paraSecondSet) throws Exception {
@@ -1913,8 +1749,7 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Convert a long value to a bit string.
 	 * 
-	 * @param paraLong
-	 *            The given long value.
+	 * @param paraLong The given long value.
 	 * @return the bit string.
 	 ********************************** 
 	 */
@@ -1935,8 +1770,7 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Return the size of the subset. It is the true values in the array.
 	 * 
-	 * @param paraSubset
-	 *            A subset with the form of a boolean array.
+	 * @param paraSubset A subset with the form of a boolean array.
 	 * @return The size.
 	 ********************************** 
 	 */
@@ -1954,8 +1788,7 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Return the size of the subset. It is the true values in the array.
 	 * 
-	 * @param paraSubset
-	 *            A subset with the form of a long.
+	 * @param paraSubset A subset with the form of a long.
 	 * @return The size.
 	 ********************************** 
 	 */
@@ -1977,14 +1810,11 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Check Who is who's subset.
 	 * 
-	 * @param paraFirstSet
-	 *            the first set in long.
-	 * @param paraSecondSet
-	 *            the second set in long.
-	 * @param paraNumberOfConditions
-	 *            the number of conditions.
-	 * @return '0' means no relationship, '1' means the second is the subset,
-	 *         '2' means the first is the subset, '3' means equal.
+	 * @param paraFirstSet           the first set in long.
+	 * @param paraSecondSet          the second set in long.
+	 * @param paraNumberOfConditions the number of conditions.
+	 * @return '0' means no relationship, '1' means the second is the subset, '2' means the first is the
+	 *         subset, '3' means equal.
 	 *************************** 
 	 */
 	public static char subSetCheck(long paraFirstSet, long paraSecondSet, int paraNumberOfConditions) {
@@ -2019,8 +1849,7 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Convert a boolean matrix to string
 	 * 
-	 * @param paraMatrix
-	 *            The boolean matrix.
+	 * @param paraMatrix The boolean matrix.
 	 * @return The string.
 	 ********************************** 
 	 */
@@ -2043,13 +1872,10 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Generate a boolean array to divide a dataset in two
 	 * 
-	 * @param paraDatasetSize
-	 *            the dataset size
-	 * @param paraPercentage
-	 *            the percentage of the first subset.
+	 * @param paraDatasetSize the dataset size
+	 * @param paraPercentage  the percentage of the first subset.
 	 * @return The result boolean array.
-	 * @throws Exception
-	 *             If the percentage exceeds lower/upper bounds.
+	 * @throws Exception If the percentage exceeds lower/upper bounds.
 	 ********************************** 
 	 */
 	public static boolean[] generateBooleanArrayForDivision(int paraDatasetSize, double paraPercentage)
@@ -2105,8 +1931,7 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Revert a boolean array.
 	 * 
-	 * @param paraArray
-	 *            the given array
+	 * @param paraArray the given array
 	 * @return reverted array.
 	 ********************************** 
 	 */
@@ -2122,10 +1947,8 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Remove supersets, used to obtain reducts.
 	 * 
-	 * @param paraSets
-	 *            the subsets with each one represented by a long value.
-	 * @param paraNumberOfConditions
-	 *            the number of condition of the dataset
+	 * @param paraSets               the subsets with each one represented by a long value.
+	 * @param paraNumberOfConditions the number of condition of the dataset
 	 * @return a set of reducts without superflous attributes.
 	 ********************************** 
 	 */
@@ -2177,13 +2000,10 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Set intersection. The sets should be sorted.
 	 * 
-	 * @param paraFirstSet
-	 *            The first set indicated by numbers for indices.
-	 * @param paraSecondSet
-	 *            The second set indicated by numbers for indices.
+	 * @param paraFirstSet  The first set indicated by numbers for indices.
+	 * @param paraSecondSet The second set indicated by numbers for indices.
 	 * @return a set for the intersection.
-	 * @throws Exception
-	 *             For unordered data.
+	 * @throws Exception For unordered data.
 	 ********************************** 
 	 */
 	public static int[] setIntersection(int[] paraFirstSet, int[] paraSecondSet) throws Exception {
@@ -2230,8 +2050,7 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Is the given array in an ascending order?
 	 * 
-	 * @param paraArray
-	 *            The int array.
+	 * @param paraArray The int array.
 	 * @return true if it is ascending (equal values permitted).
 	 ********************************** 
 	 */
@@ -2248,8 +2067,7 @@ public class SimpleTools extends Object {
 	 *************************** 
 	 * Judge whether or not the given boolean matrix is upper triangle one.
 	 * 
-	 * @param paraMatrix
-	 *            The given boolean matrix.
+	 * @param paraMatrix The given boolean matrix.
 	 * @return The constructed String.
 	 *************************** 
 	 */
@@ -2269,8 +2087,7 @@ public class SimpleTools extends Object {
 	 ************************* 
 	 * Print a boolean array as IDs.
 	 * 
-	 * @param paraBooleanArray
-	 *            The given array.
+	 * @param paraBooleanArray The given array.
 	 ************************* 
 	 */
 	public static void printBooleanArrayAsID(boolean[] paraBooleanArray) {
@@ -2284,13 +2101,10 @@ public class SimpleTools extends Object {
 
 	/**
 	 ************************* 
-	 * Compute the size of the intersection of two sets. These sets should be
-	 * ordered from small to big.
+	 * Compute the size of the intersection of two sets. These sets should be ordered from small to big.
 	 * 
-	 * @param paraFirstSet
-	 *            The indices of the first set.
-	 * @param paraSecondSet
-	 *            The indices of the second set.
+	 * @param paraFirstSet  The indices of the first set.
+	 * @param paraSecondSet The indices of the second set.
 	 * @return the intersection size
 	 ************************* 
 	 */
@@ -2316,13 +2130,10 @@ public class SimpleTools extends Object {
 
 	/**
 	 ************************* 
-	 * Compute the intersection of two sets. These sets should be ordered from
-	 * small to big.
+	 * Compute the intersection of two sets. These sets should be ordered from small to big.
 	 * 
-	 * @param paraFirstSet
-	 *            The indices of the first set.
-	 * @param paraSecondSet
-	 *            The indices of the second set.
+	 * @param paraFirstSet  The indices of the first set.
+	 * @param paraSecondSet The indices of the second set.
 	 * @return the intersection. May be an empty array.
 	 ************************* 
 	 */
@@ -2352,13 +2163,11 @@ public class SimpleTools extends Object {
 
 	/**
 	 ************************* 
-	 * Compute the maximal intersections of two set families. These sets
-	 * families should be composed by exactly two sets.
+	 * Compute the maximal intersections of two set families. These sets families should be composed by
+	 * exactly two sets.
 	 * 
-	 * @param paraFirstSetFamily
-	 *            The first set family, e.g., [[1, 3, 5, 7], [0, 2, 4, 6]].
-	 * @param paraSecondSetFamily
-	 *            The second set family, e.g., [[1, 2, 3], [0, 4, 5, 6, 7]].
+	 * @param paraFirstSetFamily  The first set family, e.g., [[1, 3, 5, 7], [0, 2, 4, 6]].
+	 * @param paraSecondSetFamily The second set family, e.g., [[1, 2, 3], [0, 4, 5, 6, 7]].
 	 * @return the maximal intersection family.
 	 ************************* 
 	 */
@@ -2383,10 +2192,8 @@ public class SimpleTools extends Object {
 	 ************************* 
 	 * Are double matrices equal?
 	 * 
-	 * @param paraMatrix1
-	 *            The first matrix.
-	 * @param paraMatrix2
-	 *            The second matrix.
+	 * @param paraMatrix1 The first matrix.
+	 * @param paraMatrix2 The second matrix.
 	 * @return True if equal.
 	 ************************* 
 	 */
@@ -2426,8 +2233,7 @@ public class SimpleTools extends Object {
 	 ************************* 
 	 * Normalize a decision system. Attention: the given data will be changed!
 	 * 
-	 * @param paraData
-	 *            The given data.
+	 * @param paraData The given data.
 	 ************************* 
 	 */
 	public static void normalizeDecisionSystem(Instances paraData) {
@@ -2469,8 +2275,7 @@ public class SimpleTools extends Object {
 	 ************************* 
 	 * Get the index of the maximal value.
 	 * 
-	 * @param paraArray
-	 *            The given array.
+	 * @param paraArray The given array.
 	 * @return The index.
 	 ************************* 
 	 */
@@ -2490,11 +2295,9 @@ public class SimpleTools extends Object {
 	 ************************* 
 	 * Is the given index in the block?
 	 * 
-	 * @param paraBlock
-	 *            The given block which is sorted in ascending order. In this
-	 *            way we can use binary searching.
-	 * @param paraInt
-	 *            The given index.
+	 * @param paraBlock The given block which is sorted in ascending order. In this way we can use
+	 *                  binary searching.
+	 * @param paraInt   The given index.
 	 * @return In block or not.
 	 ************************* 
 	 */
@@ -2523,28 +2326,26 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Get a random order index array.
 	 * 
-	 * @param paraLength
-	 *            The length of the array.
+	 * @param paraLength The length of the array.
 	 * @return A random order.
 	 ********************************** 
 	 */
 	public static int[] getRandomSubset(int paraLength, int paraSubsetSize) {
 		int[] tempRandomizedArray = getRandomOrder(paraLength);
 		int[] resultArray = new int[paraSubsetSize];
-		//Copy.
+		// Copy.
 		for (int i = 0; i < resultArray.length; i++) {
 			resultArray[i] = tempRandomizedArray[i];
-		}//Of for i
-		
+		} // Of for i
+
 		return resultArray;
-	}//Of getRandomSubset
+	}// Of getRandomSubset
 
 	/**
 	 ********************************** 
 	 * Get a random order index array.
 	 * 
-	 * @param paraLength
-	 *            The length of the array.
+	 * @param paraLength The length of the array.
 	 * @return A random order.
 	 ********************************** 
 	 */
@@ -2574,8 +2375,7 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Disorder a dataset, so that the order does not influence the results.
 	 * 
-	 * @param paraFilename
-	 *            The given filename.
+	 * @param paraFilename The given filename.
 	 ********************************** 
 	 */
 	public static void disorderData(String paraFilename) {
@@ -2618,8 +2418,7 @@ public class SimpleTools extends Object {
 	 ********************************** 
 	 * Disorder a dataset, so that the order does not influence the results.
 	 * 
-	 * @param paraData
-	 *            The given dataset.
+	 * @param paraData The given dataset.
 	 ********************************** 
 	 */
 	public static void disorderData(Instances paraData) {
@@ -2703,8 +2502,7 @@ public class SimpleTools extends Object {
 	 ************************** 
 	 * Testing method.
 	 * 
-	 * @param args
-	 *            The parameters.
+	 * @param args The parameters.
 	 ************************** 
 	 */
 	public static void main(String args[]) {
@@ -2712,12 +2510,9 @@ public class SimpleTools extends Object {
 		// int[] firstSet = {2};
 		// int[] firstSet = {};
 		// int[] firstSet = {1};
-		/*
-		 * int[] firstSet = { 2, 3, 6 }; int[] secondSet = { 2, 3, 6 }; int[]
-		 * thirdSet = {}; try { thirdSet = setIntersection(firstSet, secondSet);
-		 * } catch (Exception ee) { System.out.println(ee); return; }
-		 * printIntArray(thirdSet);
-		 */
+		/* int[] firstSet = { 2, 3, 6 }; int[] secondSet = { 2, 3, 6 }; int[] thirdSet = {}; try { thirdSet
+		 * = setIntersection(firstSet, secondSet); } catch (Exception ee) { System.out.println(ee); return;
+		 * } printIntArray(thirdSet); */
 		// testIntersectionSize();
 		// testIntersection();
 		// testBinarySetFamilyMaximalIntersection();

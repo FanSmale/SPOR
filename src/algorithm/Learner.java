@@ -1,97 +1,183 @@
 package algorithm;
 
 import java.io.BufferedReader;
+/**
+ * The learning method of Spor. 
+ * It trains the training set after the Spor process and compared with traditional co-training method.
+ * 
+ * @author Yu Li<br>
+ *         Email:1132559357@qq.com<br>
+ *         Date Created£ºAugust 5, 2020 <br>
+ *         Last Modifide: August 8, 2020 <br>
+ * 
+ * @version 1.0
+ */
 import java.io.FileReader;
 import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.PrimitiveIterator.OfDouble;
-
 import common.DistanceMeasure;
 import common.SimpleTools;
 import cotrainer.Cotrainer;
-import regressor.KnnRegressor;
-import weka.classifiers.pmml.consumer.Regression;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.filters.unsupervised.attribute.FirstOrder;
 
-import java.awt.Label;
-import java.io.*;
-import java.util.*;
-import java.text.*;
-
-import weka.core.*;
-
+/**
+ * The learning method of SPOR. It trains given data based self-pace co-training regrime.
+ * Copyright: The source code and all documents are open and free. PLEASE keep
+ * this header while revising the program. <br>
+ * Organization: <a href=http://www.fansmale.com/>Lab of Machine Learning</a>,
+ * Southwest Petroleum University, Chengdu 610500, China.<br>
+ * @author Yu Li<br>
+ *         Email:1132559357@qq.com<br>
+ *         Date Created£ºAugust 10, 2020 <br>
+ *         Last Modifide: August 20, 2020 <br>
+ * 
+ * @version 1.0
+ */
 public class Learner {
 	/**
-	 * The trainingSet.
+	 * The training set.
 	 */
 	Instances trainingSet;
+
 	/**
-	 * The unlabeledSet.
+	 * The unlabeled set.
 	 */
 	Instances unlabeledSet;
+
 	/**
-	 * The testingSet.
+	 * The testing set.
 	 */
 	Instances testingSet;
+
 	/**
 	 * The data.
 	 */
 	Instances data;
+
 	/**
-	 * The size of the trainingSet.
+	 * The size of the training set.
 	 */
-	int trainingSetsize;
+	int trainingSetSize;
+
 	/**
-	 * The size of the unlabelSetsize.
+	 * The size of the unlabele'd set.
 	 */
-	int unlabelSetsize;
+	int unlabelSetSize;
+
 	/**
-	 * The size of the testingSetsize.
+	 * The size of the testing set.
 	 */
-	int testingSetsize;
+	int testingSetSize;
+
 	/**
-	 * The kvalue of the first cotrainer.
+	 * The kValue of the first cotrainer.
 	 */
 	int firstKvalue;
+
 	/**
-	 * The kvalue of the second cotrainer.
+	 * The kValue of the second cotrainer.
 	 */
 	int secondKvalue;
+
 	/**
-	 * The poolSize.
+	 * The pool size of unlabeled set.
 	 */
-	int poolSize;
+	static int poolSize = 100;
+
 	/**
-	 * The training iterations.
+	 * The training iteration.
 	 */
 	int iterations;
+
 	/**
-	 * The denoise effective times.
+	 * The self-pace-lambda to select unlabeled instance.
 	 */
-	double Threshold;
-	public static int win = 0;
+	double Lambda = 1;
+
 	/**
-	 * The denoise does not effective times.
+	 * The self-pace-gamma to fix unlabeled instance.
 	 */
-	public static int lose = 0;
+	double gamma = 0.01;
+
 	/**
-	 * The DistanceMeasure of the first cotrainer.
+	 * The adoptive array based the value of gamma to fix the instance selection.
+	 */
+	double[] gammaArray = new double[poolSize];
+
+	/**
+	 * The step size of lambda.
+	 */
+	double stepSize = 0;
+
+	/**
+	 * The drop rate of cortrainer.
+	 */
+	public double errorDrop = 0;
+
+	/**
+	 * The number of instances added by first cortrainer.
+	 */
+	public int firstCortaininerAddInstances = 0;
+
+	/**
+	 * The number of instances added by second cortrainer.
+	 */
+	public int secondCortaininerAddInstances = 0;
+
+	/**
+	 * The maximum drop rate of cortrainer.
+	 */
+	public double maxErrorDrop = 0;
+
+	/**
+	 * The minimum drop rate of cortrainer.
+	 */
+	public double minErrorDrop = 0;
+
+	/**
+	 * The mean squared error of cortrainer before co-training process.
+	 */
+	public double beforeMse = 0;
+
+	/**
+	 * The mean squared error of cortrainer after co-training process.
+	 */
+	public double afterMse = 0;
+
+	/**
+	 * The distance measure (such as Manhattan, Euclidean distance) of the first cotrainer.
 	 */
 	DistanceMeasure firstDistanceMeasure;
+
 	/**
-	 * The DistanceMeasure of the second cotrainer.
+	 * The distance measure (such as Manhattan, Euclidean distance) of the second cotrainer.
 	 */
 	DistanceMeasure secondDistanceMeasure;
+
 	/**
 	 * The first cotrainer.
 	 */
 	public Cotrainer firstCotrainer;
+
 	/**
 	 * The second cotrainer.
 	 */
 	public Cotrainer secondCotrainer;
+
+	/**
+	 ********************
+	 * Initialize log parameters.
+	 ********************
+	 */
+	public void initializeParameters() {
+		errorDrop = 0;
+		maxErrorDrop = 0;
+		minErrorDrop = 0;
+		firstCortaininerAddInstances = 0;
+		secondCortaininerAddInstances = 0;
+		beforeMse = 0;
+		afterMse = 0;
+	}// Of setParameters
 
 	/**
 	 ********************
@@ -101,56 +187,72 @@ public class Learner {
 	 * @param paraDistanceMeasure1 The given distance measure of the first cotraniner.
 	 * @param paraDistanceMeasure2 The given distance measure of the second cotraniner.
 	 * @param paraKvalue1          The given kValue of the first cotraniner.
-	 * @param paraKvalue2          The given Kvalue of the second cotraniner.
-	 * @param paraPoolsize         The given poolsize of the unlableledSet.
+	 * @param parakvalue2          The given kValue of the second cotraniner.
+	 * @param paraPoolsize         The given pool size of the unlableledSet.
 	 * @param paraLabeledrate      The proportion of the training data.
 	 * @param paraTestingrate      The proportion of the testing data.
-	 * @param paraIterations       The training iterations.
+	 * @param paraiterations       The training iterations.
+	 * @param paraLambda           The self-pace lambda.
+	 * @param paraStepSize         The step size to control lambda.
+	 * @param paraGamma			   The gamma value to control instance selection.
 	 ********************
 	 */
 	public Learner(Instances paraData, int paraDistanceMeasure1, int paraDistanceMeasure2, int paraKvalue1,
-			int paraPoolsize, int paraKvalue2, double paraLabeledrate, double paraTestingrate, int paraIterations,double paraThreshold) {
+			int paraPoolsize, int parakvalue2, double paraLabeledrate, double paraTestingrate, int paraiterations,
+			double paraLambda, double paraStepSize, double paraGamma) {
+
+		// Step 1 Set the parameters of constructor.
 		data = paraData;
-		Threshold =paraThreshold;
+		Lambda = paraLambda;
+		gamma = paraGamma;
+		stepSize = paraStepSize;
 		firstKvalue = paraKvalue1;
-		secondKvalue = paraKvalue2;
+		secondKvalue = parakvalue2;
 		poolSize = paraPoolsize;
-		iterations = paraIterations;
-		trainingSetsize = (int) (data.numInstances() * paraLabeledrate);
-		testingSetsize = (int) (data.numInstances() * paraTestingrate);
-		unlabelSetsize = data.numInstances() - trainingSetsize - testingSetsize;
+		iterations = paraiterations;
+		trainingSetSize = (int) (data.numInstances() * paraLabeledrate);
+		testingSetSize = (int) (data.numInstances() * paraTestingrate);
+		unlabelSetSize = data.numInstances() - trainingSetSize - testingSetSize;
 		trainingSet = new Instances(data, 0);
 		testingSet = new Instances(data, 0);
 		unlabeledSet = new Instances(data, 0);
+		gammaArray = gammaArray(paraGamma);
 		Instance tempInstance = null;
-		for (int i = 0; i < trainingSetsize; i++) {
+
+		// Step 2 Split the data set.
+		for (int i = 0; i < trainingSetSize; i++) {
 			tempInstance = data.instance(i);
 			trainingSet.add(tempInstance);
-		} // of for i
-		for (int i = trainingSetsize; i < trainingSetsize + testingSetsize; i++) {
+		} // Of for i
+		for (int i = trainingSetSize; i < trainingSetSize + testingSetSize; i++) {
 			tempInstance = data.instance(i);
 			unlabeledSet.add(tempInstance);
-		} // of for i
-		for (int i = trainingSetsize + testingSetsize; i < data.numInstances(); i++) {
+		} // Of for i
+		for (int i = trainingSetSize + testingSetSize; i < data.numInstances(); i++) {
 			tempInstance = data.instance(i);
 			testingSet.add(tempInstance);
-		} // of for i
+		} // Of for i
+
+		// Step 3 Build the cotrainer.
 		firstCotrainer = new Cotrainer(paraKvalue1, trainingSet, unlabeledSet, testingSet, paraPoolsize,
-				paraDistanceMeasure1,Threshold);
-		secondCotrainer = new Cotrainer(paraKvalue2, trainingSet, unlabeledSet, testingSet, paraPoolsize,
-				paraDistanceMeasure2,Threshold);
-	}// of learner
+				paraDistanceMeasure1, Lambda);
+		secondCotrainer = new Cotrainer(parakvalue2, trainingSet, unlabeledSet, testingSet, paraPoolsize,
+				paraDistanceMeasure2, Lambda);
+	}// Of learner
 
 	/**
 	 ********************
-	 * Cotraining process.Two Cotrainer select the most confidengce instance for partner from
-	 * unlabeledSet.
+	 * Cotraining process.
+	 * 
+	 * Two Cotrainer select the most confidence instance for partner from unlabeledSet.
 	 ********************
 	 */
-	public void cotraining() {
+	public void Cotraining() {
+		// Step 1 Initialize the given instance
 		Instance firstInstance;
 		Instance secondInstance;
 
+		// Step 2 Find the instance for other regressor and add it into training set.
 		for (int i = 0; i < iterations; i++) {
 			int cotrainingFlag = 2;
 			firstInstance = firstCotrainer.selectCriticalInstance();
@@ -158,61 +260,206 @@ public class Learner {
 				cotrainingFlag -= 1;
 			} else {
 				secondCotrainer.updateTrainingSet(firstInstance);
-				SimpleTools.NumInstances2added++;
-			
-			} // of if
+				secondCortaininerAddInstances++;
+			} // Of if
 			secondInstance = secondCotrainer.selectCriticalInstance();
 
 			if (secondInstance == null) {
 				cotrainingFlag -= 1;
 			} else {
 				firstCotrainer.updateTrainingSet(secondInstance);
-				SimpleTools.NumInstances1added++;
-			
-			} // of if
-
+				firstCortaininerAddInstances++;
+			} // Of if
 			if (cotrainingFlag == 0) {
 				break;
-			} // of if
-		} // of for i
-	}// of cotraining
+			} // Of if
+		} // Of for i
+	}// Of Cotraining
 
+	/**
+	 ********************
+	 * Cotraining process.
+	 * 
+	 * Two Cotrainer select the most confidence instance for partner from unlabeledSet.
+	 ********************
+	 */
 	public void Cotraininges() {
+		// Step 1. Initialize the given instances
 		Instances firstAddedInstances;
 		Instances secondAddedInstances;
-		double stepsize=0.005;
-		double tempThreshold=0;
+
+		// Step 2. Find the confidence instances for other regressor and add them into training set.
 		for (int i = 0; i < iterations; i++) {
-			tempThreshold=Threshold-i*stepsize;
 			int cotrainingFlag = 2;
-			//firstCotrainer.setThreshold(tempThreshold);
 			firstAddedInstances = firstCotrainer.selectCriticalInstances();
 			if (firstAddedInstances == null) {
 				cotrainingFlag -= 1;
 			} else {
 				secondCotrainer.updateTrainingSet(firstAddedInstances);
-				SimpleTools.NumInstances2added+=firstAddedInstances.numInstances();
-				// System.out.println(SimpleTools.NumInstances2added);
-			} // of if	
-			//secondCotrainer.setThreshold(tempThreshold);
+				secondCortaininerAddInstances += firstAddedInstances.numInstances();
+			} // Of if
+
 			secondAddedInstances = secondCotrainer.selectCriticalInstances();
 			if (secondAddedInstances == null) {
 				cotrainingFlag -= 1;
 			} else {
 				firstCotrainer.updateTrainingSet(secondAddedInstances);
-				SimpleTools.NumInstances1added+=secondAddedInstances.numInstances();
-				// System.out.println(SimpleTools.NumInstances2added);
-			} // of if
+				firstCortaininerAddInstances += secondAddedInstances.numInstances();
+			} // Of if
 			if (cotrainingFlag == 0) {
 				break;
-			} // of if
-		}	
-	}
-	
+			} // Of if
+		}// Of for i
+	}// Of Cotraininges
 
 	/**
 	 ********************
-	 * Learn. Test the effect of Cotraining process.
+	 * Self-pace Cotraining process.
+	 * 
+	 * Two Cotrainer select the most confidence instance for partner from unlabeledSet.
+	 ********************
+	 */
+	public void splCotraininges() {
+		// Step 1 Initialize the given instances
+		Instances firstAddedInstances;
+		Instances secondAddedInstances;
+
+		// Step 2 Using self-pace Lambda to find the confidence instances for other regressor and add them
+		// into training set.
+		double tempLambda = Lambda;
+		for (int i = 0; i < iterations; i++) {
+			tempLambda = Lambda - i * stepSize;
+			int cotrainingFlag = 2;
+			firstCotrainer.setLambda(tempLambda);
+			firstAddedInstances = firstCotrainer.selectCriticalInstances();
+			if (firstAddedInstances == null) {
+				cotrainingFlag -= 1;
+			} else {
+				secondCotrainer.updateTrainingSet(firstAddedInstances);
+				secondCortaininerAddInstances += firstAddedInstances.numInstances();
+
+			} // Of if
+			secondCotrainer.setLambda(tempLambda);
+			secondAddedInstances = secondCotrainer.selectCriticalInstances();
+			if (secondAddedInstances == null) {
+				cotrainingFlag -= 1;
+			} else {
+				firstCotrainer.updateTrainingSet(secondAddedInstances);
+				firstCortaininerAddInstances += secondAddedInstances.numInstances();
+			} // Of if
+			if (cotrainingFlag == 0) {
+				break;
+			} // Of if
+		}// Of for i
+	}// Of splCotraininges
+
+	/**
+	 ********************
+	 * Self-pace Cotraining process.
+	 * 
+	 * Two Cotrainer select the most confidence instance for partner from unlabeledSet.
+	 ********************
+	 */
+	public void spmcoCotraininges() {
+		// Step 1 Initialize the given instances
+		Instances firstAddedInstances;
+		Instances secondAddedInstances;
+
+		// Step 2 Using self-pace lambda to find the confidence instances for other regressor and add them
+		// into training set.
+		double tempLambda = Lambda;
+		for (int i = 0; i < iterations; i++) {
+			tempLambda = Lambda - i * stepSize;
+			int cotrainingFlag = 2;
+			firstCotrainer.setLambda(tempLambda);
+			firstAddedInstances = firstCotrainer.selectCriticalInstances(secondCotrainer.getTrainingSet(), gammaArray,
+					secondKvalue);
+			if (firstAddedInstances == null) {
+				cotrainingFlag -= 1;
+			} else {
+				secondCotrainer.updateTrainingSet(firstAddedInstances);
+				secondCortaininerAddInstances += firstAddedInstances.numInstances();
+			} // Of if
+			secondCotrainer.setLambda(tempLambda);
+			secondAddedInstances = secondCotrainer.selectCriticalInstances(firstCotrainer.getTrainingSet(), gammaArray,
+					firstKvalue);
+			if (secondAddedInstances == null) {
+				cotrainingFlag -= 1;
+			} else {
+				firstCotrainer.updateTrainingSet(secondAddedInstances);
+				firstCortaininerAddInstances += secondAddedInstances.numInstances();
+			} // Of if
+			if (cotrainingFlag == 0) {
+				break;
+			} // Of if
+		}// Of for i
+	}// Of spmcoCotraininges
+
+	/**
+	 ********************
+	 * Self-pace Cotraining process.
+	 * 
+	 * Two Cotrainer select the most confidence instance for partner from unlabeledSet with stable
+	 * Lambda.
+	 ********************
+	 */
+	public void stableCotraininges() {
+		// Step 1 Initialize the given instances
+		Instances firstAddedInstances;
+		Instances secondAddedInstances;
+
+		// Step 2 Using self-pace Lambda to find the confidence instances for other regressor and add them
+		// into training set.
+
+		for (int i = 0; i < iterations; i++) {
+			int cotrainingFlag = 2;
+			firstAddedInstances = firstCotrainer.selectCriticalInstances(secondCotrainer.getTrainingSet(), gammaArray,
+					secondKvalue);
+			if (firstAddedInstances == null) {
+				cotrainingFlag -= 1;
+			} else {
+				secondCotrainer.updateTrainingSet(firstAddedInstances);
+				secondCortaininerAddInstances += firstAddedInstances.numInstances();
+			} // Of if
+			secondAddedInstances = secondCotrainer.selectCriticalInstances(firstCotrainer.getTrainingSet(), gammaArray,
+					firstKvalue);
+			if (secondAddedInstances == null) {
+				cotrainingFlag -= 1;
+			} else {
+				firstCotrainer.updateTrainingSet(secondAddedInstances);
+				firstCortaininerAddInstances += secondAddedInstances.numInstances();
+			} // Of if
+			if (cotrainingFlag == 0) {
+				break;
+			} // Of if
+		}// Of for i
+	}// Of stableCotraininges
+
+	/**
+	 ********************
+	 * The gamma term to correct the instance selection strategy.
+	 * 
+	 * @param paraGamma. The maximum value of gamma.
+	 * @return resultGamma. The adoptive value of gamma.
+	 ********************
+	 */
+	public static double[] gammaArray(double paraGamma) {
+		double tempW = 0;
+		tempW = paraGamma * 4 / (poolSize * poolSize);
+		double[] resultGamma = new double[poolSize];
+		for (int i = 0; i < resultGamma.length; i++) {
+			if (i < 0.5 * poolSize) {
+				resultGamma[i] = -1 * tempW * (i - poolSize / 2) * (i - poolSize / 2);
+			} else {
+				resultGamma[i] = tempW * (i - poolSize / 2) * (i - poolSize / 2);
+			}// Of if
+		}// Of for
+		return resultGamma;
+	}// Of gammaArray
+
+	/**
+	 ********************
+	 * Learn process. Test the effect of Cotraining process.
 	 * 
 	 * @param paraCotrainer1 The first Cotrainer.
 	 * @param paraCotrainer2 The second Cotrainer.
@@ -220,65 +467,48 @@ public class Learner {
 	 ********************
 	 */
 	public String Learn(Cotrainer paraCotrainer1, Cotrainer paraCotrainer2) {
-		DecimalFormat df = new DecimalFormat("0.000000000");
+		// Step 1 Initialize the tool parameters and arrays.
+		DecimalFormat decimalFormat = new DecimalFormat("0.000000000");
 		double tempMse1 = 0;
 		double tempMse2 = 0;
-		double tempPreMse = 0;
-		double tempDeNoiseMse = 0;
 		Instance tempInstance = null;
 		String resultMessage = "";
-		//paraCotrainer1.crossValid();
-		//paraCotrainer2.crossValid();
+
+		// Step 2 Test the model in testing set.
 		for (int i = 0; i < testingSet.numInstances(); i++) {
+
+			// Step 2.1 Compute the prediction of testing instances and mean squared error.
 			tempInstance = testingSet.instance(i);
 			double tempValue1 = (paraCotrainer1.predict(tempInstance) + paraCotrainer2.predict(tempInstance)) / 2;
-			//double testpredict1 = paraCotrainer1.predict(tempInstance);
-			//double testpredict2 = paraCotrainer2.predict(tempInstance);
 			double tempValue2 = (paraCotrainer1.predict(trainingSet, tempInstance)
 					+ paraCotrainer2.predict(trainingSet, tempInstance)) / 2;
-			//double testpredict3 = paraCotrainer1.predict(trainingSet, tempInstance);
-			//double testpredict4 = paraCotrainer2.predict(trainingSet, tempInstance);
-			double tempDeNoiseValue = (paraCotrainer1.deNoisePredict(tempInstance)
-					+ paraCotrainer2.deNoisePredict(tempInstance)) / 2;
-			double tempPrevalue = (paraCotrainer1.preDeNoisePredict(tempInstance)
-					+ paraCotrainer2.preDeNoisePredict(tempInstance)) / 2;
-			tempPreMse+=(tempPrevalue - tempInstance.classValue())
-					* (tempPrevalue - tempInstance.classValue());
 			tempMse1 += (tempValue1 - tempInstance.classValue()) * (tempValue1 - tempInstance.classValue());
 			tempMse2 += (tempValue2 - tempInstance.classValue()) * (tempValue2 - tempInstance.classValue());
-			tempDeNoiseMse += (tempDeNoiseValue - tempInstance.classValue())
-					* (tempDeNoiseValue - tempInstance.classValue());
-		} // of for i
+		} // Of for i
 		tempMse1 /= testingSet.numInstances();
 		tempMse2 /= testingSet.numInstances();
-		tempDeNoiseMse /= testingSet.numInstances();
-		tempPreMse/=testingSet.numInstances();
-		if (tempDeNoiseMse <= tempMse1) {
-			SimpleTools.win++;
-		} else {
-			SimpleTools.lose++;
-		}
+
+		// Step 2.2 Log the performance of the model.
+		beforeMse += tempMse2;
+		afterMse += tempMse1;
 		double tempMseDrop = 0;
 		tempMseDrop = tempMse2 - tempMse1;
-		SimpleTools.errorDrop += (tempMseDrop / tempMse2);
-		SimpleTools.lastDrop += (tempMse2 - tempDeNoiseMse) / tempMse2;
-		SimpleTools.preDrop+=tempMse1;
-		if (SimpleTools.maxErrorDrop < (tempMseDrop)) {
-			SimpleTools.maxErrorDrop = tempMseDrop;
-		} // of if
-		if (SimpleTools.minErrorDrop > (tempMseDrop)) {
-			SimpleTools.minErrorDrop = tempMseDrop;
-		} // of if
-		resultMessage += "Mean-square error:" + df.format(tempMse2) +"("+trainingSet.numInstances()+"/"+trainingSet.numInstances()+")"+ "->";
-		resultMessage += "" + df.format(tempMse1) +"("+firstCotrainer.trainingSetSize()+"/"+secondCotrainer.trainingSetSize()+")"+"      ";
-		resultMessage += "The error drop:" + df.format(tempMseDrop);
-		resultMessage += "      Drop Rate:" + df.format((tempMseDrop / tempMse2) * 100) + "%" + "\r\n";
-		resultMessage += "The denoise Mse:" + df.format(tempMse1) +"("+firstCotrainer.trainingSetSize()+"/"+secondCotrainer.trainingSetSize()+")"+ "->" + df.format(tempDeNoiseMse) +"("+firstCotrainer.debugtrainingSetSize()+"/"+secondCotrainer.debugtrainingSetSize()+")"+ "      ";
-		resultMessage += "The denoise Mse drop rate:" + df.format(((tempMse1 - tempDeNoiseMse) / tempMse1) * 100) + "%"
-				+ "\r\n";
-		resultMessage += "The last drop:" + df.format(((tempMse2 - tempDeNoiseMse) / tempMse2) * 100) + "%" + "\r\n";
+		errorDrop += (tempMseDrop / tempMse2);
+		if (maxErrorDrop < (tempMseDrop)) {
+			maxErrorDrop = tempMseDrop;
+		} // Of if
+		if (minErrorDrop > (tempMseDrop)) {
+			minErrorDrop = tempMseDrop;
+		} // Of if
+		// Step 2.3 Print the test informations.
+		resultMessage += "Mean-square error:" + decimalFormat.format(tempMse2) + "(" + trainingSet.numInstances() + "/"
+				+ trainingSet.numInstances() + ")" + "->";
+		resultMessage += "" + decimalFormat.format(tempMse1) + "(" + firstCotrainer.getTrainingSetSize() + "/"
+				+ secondCotrainer.getTrainingSetSize() + ")" + "      ";
+		resultMessage += "The error drop:" + decimalFormat.format(tempMseDrop);
+		resultMessage += "      Drop Rate:" + decimalFormat.format((tempMseDrop / tempMse2) * 100) + "%" + "\r\n";
 		return resultMessage;
-	}// of learn
+	}// Of learn
 
 	/**
 	 ************************* 
@@ -288,7 +518,6 @@ public class Learner {
 	 ************************* 
 	 */
 	public static void main(String[] args) {
-		String tempFilename = "/Coregtest/src/data/kin8nm.arff";
 		String tempString = "";
 		try {
 			BufferedReader r = new BufferedReader(new FileReader("src/data/kin8nm.arff"));
@@ -296,18 +525,18 @@ public class Learner {
 			r.close();
 			tempdata.setClassIndex(tempdata.numAttributes() - 1);
 			SimpleTools.normalizeDecisionSystem(tempdata);
+			double[] resultGamma = gammaArray(0.3);
+			System.out.print(resultGamma);
 			for (int i = 0; i < 10; i++) {
 				SimpleTools.disorderData(tempdata);
 				Learner tempLearner = new Learner(tempdata, DistanceMeasure.EUCLIDEAN, DistanceMeasure.EUCLIDEAN, 3, 50,
-						3, 0.1, 0.5, 20,0.9);
-				tempLearner.cotraining();
-				tempLearner.firstCotrainer.denoise();
-				tempLearner.secondCotrainer.denoise();
+						3, 0.1, 0.5, 20, 0.9, 0.05, 0.01);
+				tempLearner.Cotraining();
 				tempString += tempLearner.Learn(tempLearner.firstCotrainer, tempLearner.secondCotrainer);
-			} // of for i
+			} // Of for i
 		} catch (Exception e) {
 			e.printStackTrace();
-		} // of try
+		} // Of try
 		System.out.println(tempString);
-	}// of main
-}// of class learner
+	}// Of main
+}// Of class learner
